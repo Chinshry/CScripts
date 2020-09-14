@@ -78,7 +78,7 @@
 
 ### 板块页
 
-![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/版块页.png)
+![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/jjwxc/版块页.png)
 
 <span id="blockAndReport"></span>
 
@@ -94,7 +94,7 @@
 * 右侧发帖人用户名可点击，前台跳转至**该用户名**发帖记录搜索页。
 
 ### 帖子页
-![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/帖子页.png)
+![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/jjwxc/帖子页.png)
 
 <span id="屏蔽该帖"></span>  
 
@@ -124,12 +124,12 @@
 
 ### 屏蔽页
 
-![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/屏蔽设置按钮.png)
+![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/jjwxc/屏蔽设置按钮.png)
 
 点击版块页右上角屏蔽设置，进入屏蔽页。  
 除了屏蔽词管理，新增了屏蔽帖子和屏蔽用户名管理，点击上方TAB进行切换。
 
-![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/屏蔽页.png)
+![](https://raw.githubusercontent.com/cccccchin/MyScripts/master/jjwxc/屏蔽页.png)
 
 <span id="查看屏蔽帖子"></span>
 
