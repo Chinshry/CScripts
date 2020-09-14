@@ -11,6 +11,7 @@
 // @include      https://bbs.jjwxc.net/search.php*
 // @include      https://bbs.jjwxc.net/filterword.php*
 // @include      https://bbs.jjwxc.net/userinfo.php*
+// @updateURL    https://raw.github.com/cccccchin/MyScripts/master/%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA%2B.js
 // ==/UserScript==
 
 
@@ -26,8 +27,16 @@ const IS_BOARD = IS_NEWPOST || pathname.indexOf('board') >= 0;
 const IS_POST = pathname.indexOf('showmsg') >= 0;
 const IS_SEARCH = pathname.indexOf('search') >= 0;
 const IS_FILTER = pathname.indexOf('filterword') >= 0;
+var IS_WONDERFUL,IS_START;
 const BOARD_ID = IS_BOARD || IS_POST || IS_SEARCH ? getPageParams('board') : '';
 const POST_ID = IS_POST ? getPageParams('id') : '';
+const BOARD_TYPE = IS_BOARD ? getPageParams('type') : '';
+
+if(BOARD_TYPE == "wonderful"){
+    IS_WONDERFUL = true;
+} else if(BOARD_TYPE == "star") {
+    IS_START = true;
+}
 
 console.log("BOARD_ID = " + BOARD_ID);
 console.log("POST_ID = " + POST_ID);
@@ -154,7 +163,7 @@ $(function () {
         board() {
             $('#subidform_submit').find('button').eq(0).text("屏蔽设置");
             let nodes = $('#msglist').children().children().toArray();
-            console.log(nodes);
+
             if (IS_NEWPOST){
                 nodes = $('body').find('table').eq(2).children().children().toArray();
             }
@@ -167,6 +176,9 @@ $(function () {
                 let authorNode = $(node).find('td').eq(4);
                 let title = titleNode[0].innerText;
                 let url = $(titleNode).children().attr('href');
+                if (IS_WONDERFUL || IS_START){
+                    url = $(titleNode).children().eq(1).attr('href');
+                }
                 let id = getPageParams('id', url);
                 let authorName = $.trim($(authorNode).text())
 
