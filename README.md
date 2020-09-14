@@ -2,9 +2,6 @@
 
 一个关于兔区的脚本  
 
----
----
-
 ## 目录
 
 * [安装与使用](#安装与使用)
@@ -29,8 +26,6 @@
     * [查看屏蔽帖子](#查看屏蔽帖子)
     * [查看屏蔽用户名](#查看屏蔽用户名)
 
----
----
 ## 安装与使用
 
 ### PC端
@@ -71,9 +66,6 @@
 设置-自定义设置-javascript扩展-右上角加号-主动扩展  
 名称随意填写，代码段填写同[via浏览器](#via)。
 
----
----
-
 ## 主要功能
 
 ### 页面优化
@@ -83,8 +75,6 @@
 * [顶部直达&底部直达](https://greasyfork.org/zh-CN/scripts/370556-%E4%B8%80%E4%B8%AA%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8%E5%92%8C%E5%88%B0%E8%BE%BE%E5%BA%95%E9%83%A8%E7%9A%84%E6%8C%89%E9%92%AE
 )
 * [链接可点击](https://github.com/lkytal/GM/blob/master/linkMix.user.js)
-
----
 
 ### 板块页
 
@@ -102,8 +92,6 @@
 **发帖人发帖记录搜索**
 
 * 右侧发帖人用户名可点击，前台跳转至**该用户名**发帖记录搜索页。
-
----
 
 ### 帖子页
 ![](2020-09-15-00-02-54.png)
@@ -134,9 +122,6 @@
 
 * 如图中主楼显示，在楼主楼层用户名左侧标记[楼主]
 
-
----
-
 ### 屏蔽页
 
 ![](2020-09-15-00-26-44.png)
@@ -163,8 +148,6 @@
 
 * 点击右方接触按钮即可移出屏蔽列表
 * 该屏蔽列表只在该浏览器内生效。比如你PC的Chrome和Firefox都安装了本脚本，屏蔽列表是不相通，不跟随账号。屏蔽列表只做浏览器本地存储，浏览器数据清理后也将全部清空。
-
----
 
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=cccccc.222qu)
 [![HitCount](http://hits.dwyl.com/{username}/https://githubcom/cccccchin/MyScripts.svg)](http://hits.dwyl.com/{username}/https://githubcom/cccccchin/MyScripts)
