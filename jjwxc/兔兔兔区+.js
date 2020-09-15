@@ -2,7 +2,7 @@
 // @name         兔兔兔区+
 // @namespace    http://tampermonkey.net/
 // @version      0.8
-// @description  屏蔽用户帖子|发帖记录|快捷举报|楼主标记|只看楼主|只看TA|白色主题去广告|链接可点击|顶部底部直达
+// @description  屏蔽用户|屏蔽帖子|发帖记录直达|快捷举报|楼主标记|只看楼主只看TA|白色主题去广告|链接可点击|顶部底部直达
 // @author       cccccc
 // @include      https://bbs.jjwxc.net/bindex.php*
 // @include      https://bbs.jjwxc.net/board.php*
