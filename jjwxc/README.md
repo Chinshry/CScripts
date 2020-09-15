@@ -30,25 +30,26 @@
 
 ### PC端
 
-1. 建议使用 Chrome或者Firefox，首先安装 [Tampermonkey](https://tampermonkey.net/) 油猴扩展
-2. 安装完成后，点击本脚本的地址 [HERE](https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA) ，根据提示安装脚本
+1. 建议使用 Chrome或者Firefox，首先安装 [Tampermonkey](https://tampermonkey.net/) 油猴扩展。
+2. 安装完成后，点击本脚本的地址 [HERE](https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA) ，根据提示安装脚本。
+3. 今后会提示更新。
 
 ### Android端
 
 1. **使用Firefox/Kiwi Browser**
 
-    步骤同PC先安装 [Tampermonkey](https://tampermonkey.net/) 油猴扩展再安装脚本.
+    步骤同PC先安装 [Tampermonkey](https://tampermonkey.net/) 油猴扩展再安装脚本，今后会提示更新。
 
 2. **使用X浏览器**
 
-    直接点击本脚本的地址 [HERE](https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA) ，根据提示安装.  
-    或新增脚本，代码同 [via浏览器](#via)。
+    点击 **设置-浏览器脚本-新增脚本**，代码同 [via浏览器](#via) 。推荐使用此方法，会自动更新，无需手动。  
+    或者直接点击本脚本的地址 [HERE](https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA) ，根据提示安装。该方法无法提示更新，只能覆盖安装，不推荐。   
 
 <span id="via"></span>
 
 3. **使用Via**
 
-   设置-脚本-右上角加号-新建  
+   设置-脚本-右上角加号-新建  ，会自动更新，无需手动。 
    域名：*  
    代码填写如下：
 
@@ -65,7 +66,7 @@
 
 * 使用Alook (付费App)  
 设置-自定义设置-javascript扩展-右上角加号-主动扩展  
-名称随意填写，代码段填写同 [via浏览器](#via)。
+名称随意填写，代码段填写同 [via浏览器](#via) 。会自动更新，无需手动。 
 
 ## 主要功能
 
