@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         兔兔兔区+
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  屏蔽用户帖子|发帖记录|快捷举报|楼主标记|只看楼主|只看TA|白色主题去广告|链接可点击|顶部底部直达
 // @author       cccccc
 // @include      https://bbs.jjwxc.net/bindex.php*
@@ -27,16 +27,9 @@ const IS_BOARD = IS_NEWPOST || pathname.indexOf('board') >= 0;
 const IS_POST = pathname.indexOf('showmsg') >= 0;
 const IS_SEARCH = pathname.indexOf('search') >= 0;
 const IS_FILTER = pathname.indexOf('filterword') >= 0;
-var IS_WONDERFUL,IS_START;
 const BOARD_ID = IS_BOARD || IS_POST || IS_SEARCH ? getPageParams('board') : '';
 const POST_ID = IS_POST ? getPageParams('id') : '';
 const BOARD_TYPE = IS_BOARD ? getPageParams('type') : '';
-
-if(BOARD_TYPE == "wonderful"){
-    IS_WONDERFUL = true;
-} else if(BOARD_TYPE == "star") {
-    IS_START = true;
-}
 
 console.log("BOARD_ID = " + BOARD_ID);
 console.log("POST_ID = " + POST_ID);
@@ -176,7 +169,7 @@ $(function () {
                 let authorNode = $(node).find('td').eq(4);
                 let title = titleNode[0].innerText;
                 let url = $(titleNode).children().attr('href');
-                if (IS_WONDERFUL || IS_START){
+                if (url == undefined) {
                     url = $(titleNode).children().eq(1).attr('href');
                 }
                 let id = getPageParams('id', url);
