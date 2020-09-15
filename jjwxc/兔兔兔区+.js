@@ -11,6 +11,7 @@
 // @include      https://bbs.jjwxc.net/search.php*
 // @include      https://bbs.jjwxc.net/filterword.php*
 // @include      https://bbs.jjwxc.net/userinfo.php*
+// @include      https://bbs.jjwxc.net/postbypolice.php*
 // @updateURL    https://raw.github.com/cccccchin/MyScripts/master/%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA%2B.js
 // ==/UserScript==
 
