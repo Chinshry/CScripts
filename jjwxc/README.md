@@ -31,7 +31,7 @@
 
 ### PC端
 
-1. 建议使用 Chrome或者Firefox，首先安装 [Tampermonkey](https://tampermonkey.net/) 油猴扩展。
+1. 建议使用 Chrome或者Firefox，首先安装 [Tampermonkey](https://tampermonkey.net/) 油猴扩展。Chrome安装扩展需科学上网，无法科学上网的安装扩展的方法请百度。
 2. 安装完成后，点击本脚本的地址 [HERE](https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA) ，根据提示安装脚本。
 3. 今后会提示更新。
 
