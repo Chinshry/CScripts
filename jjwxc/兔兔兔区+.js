@@ -14,22 +14,6 @@
 // @include      https://bbs.jjwxc.net/postbypolice.php*
 // ==/UserScript==
 
-/* 判断是否该执行 */
-function shouldRun(){
-    const whiteList = ['bindex','board','newpost','showmsg','search','filterword','userinfo','postbypolice'];
-    const hostname = window.location.hostname;
-    const pathname = window.location.pathname;
-    const finalName = pathname.substr(1).split(".")[0];
-    const thisHost = hostname == "bbs.jjwxc.net";
-    const thisPath = whiteList.indexOf(finalName);
-    if (thisHost && thisPath >= 0){
-      console.log("Is WhiteList");
-      return true;
-    }
-    console.log("Not WhiteList");
-    return false;
-}
-
 
 const up_button_icon = "https://s1.ax1x.com/2020/08/12/aXfqW4.png";
 const down_button_icon = "https://s1.ax1x.com/2020/08/12/aXfhyn.png";
@@ -177,11 +161,7 @@ function initStyle() {
     }
 }
 
-
 $(function () {
-    if (!shouldRun()){
-        return;
-    }
     initStyle()
     var initNodes = {
         board() {
@@ -240,38 +220,47 @@ $(function () {
                 if (index < start) {
                     return true;
                 }
+                var star = $(node).find('font').eq(-1);
+                $(star).remove();
 
-                var replyIdNode = $(node).find('font').eq(2)
-                var star = $(node).find('font').eq(-1)
-                $(star).remove()
-
+                var replyIdNode;
                 var replyNameNode;
+                var replyName;
 
                 if (index == 0) {
                     var lzAuthornameNode = $('.authorname').eq(0);
+                    replyIdNode = $(node).children().children().eq(2);
                     $(node).find('a').eq(0).after(`<a class="board-bam" id="${POST_ID}" board="${BOARD_ID}" data="${title}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽该帖</a>`);
                     replyNameNode = $(replyIdNode).parent().contents()
                     .filter(function () {
                         return this.nodeType == Node.TEXT_NODE;
                     });
                 } else {
+                    replyIdNode = $(node).children().eq(2);
                     replyNameNode = $(node).contents()
                     .filter(function () {
                         return this.nodeType == Node.TEXT_NODE;
                     });
                 }
 
-                var replyName = replyNameNode[0].wholeText.split("|")[0]
-                replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].substringData(0, replyNameNode[1].length - 2));
+                if (start == 0) {
+                    replyName = replyNameNode[0].wholeText.split("|")[0];
+                    replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].wholeText.split("留言")[0]);
+                    $(replyNameNode)[0].remove();
+                } else {
+                    replyName = replyNameNode[2].wholeText.split("|")[0];
+                    replyNameNode[3].replaceData(0, replyNameNode[3].length, replyNameNode[3].wholeText.split("留言")[0]);
+                    $(replyNameNode)[2].remove();
+                }
 
                 var displayName;
+
                 if ($(replyIdNode).text() == lzIdenti) {
                     displayName = "[楼主]" + replyName;
                 } else {
                     displayName = replyName;
                 }
                 $(replyIdNode).prev().after(`<a class="page-reply" id="replyName_${replyName}" href="https://bbs.jjwxc.net/search.php?act=search&board=${BOARD_ID}&keyword=${replyName}&topic=4" target="_blank">${displayName}</a>`);
-                $(replyNameNode)[0].remove()
 
                 if (index == 0) {
                     $(".board-bam").after(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">只看楼主</a>`);
