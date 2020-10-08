@@ -14,6 +14,22 @@
 // @include      https://bbs.jjwxc.net/postbypolice.php*
 // ==/UserScript==
 
+/* 判断是否该执行 */
+function shouldRun(){
+    const whiteList = ['bindex','board','newpost','showmsg','search','filterword','userinfo','postbypolice'];
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
+    const finalName = pathname.substr(1).split(".")[0];
+    const thisHost = hostname == "bbs.jjwxc.net";
+    const thisPath = whiteList.indexOf(finalName);
+    if (thisHost && thisPath >= 0){
+      console.log("Is WhiteList");
+      return true;
+    }
+    console.log("Not WhiteList");
+    return false;
+}
+
 
 const up_button_icon = "https://s1.ax1x.com/2020/08/12/aXfqW4.png";
 const down_button_icon = "https://s1.ax1x.com/2020/08/12/aXfhyn.png";
@@ -162,9 +178,11 @@ function initStyle() {
 }
 
 
-initStyle()
-
 $(function () {
+    if (!shouldRun()){
+        return;
+    }
+    initStyle()
     var initNodes = {
         board() {
             $('#subidform_submit').find('button').eq(0).text("屏蔽设置");
