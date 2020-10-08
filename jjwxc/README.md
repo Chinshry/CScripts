@@ -55,8 +55,26 @@
    代码填写如下：
 
     ```javascript
+    function shouldRun(){
+        const whiteList = ['bindex','board','newpost','showmsg','search','filterword','userinfo','postbypolice'];
+        const hostname = window.location.hostname;
+        const pathname = window.location.pathname;
+        const finalName = pathname.substr(1).split(".")[0];
+        const thisHost = (hostname == "bbs.jjwxc.net");
+        const thisPath = whiteList.indexOf(finalName);
+        if (thisHost && thisPath >= 0){
+          console.log("Is WhiteList");
+          return true;
+        }
+        console.log("Not WhiteList");
+        return false;
+    }
+
     (function(){
         console.log("ready");
+        if (!shouldRun()){
+            return;
+        }
         const scriptMy = document.createElement('script');
         scriptMy.src = 'https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA/code/%25E5%2585%2594%25E5%2585%2594%25E5%2585%2594%25E5%258C%25BA%252B.user.js';
         document.head.appendChild(scriptMy);
