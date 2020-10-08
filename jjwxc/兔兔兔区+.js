@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         兔兔兔区+
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  屏蔽用户|屏蔽帖子|发帖记录直达|快捷举报|楼主标记|只看楼主只看TA|白色主题去广告|链接可点击|顶部底部直达
+// @version      2.0
+// @description  屏蔽用户|屏蔽帖子|发帖记录直达|快捷举报|楼主标记|只看楼主只看TA|白色主题夜间主题去广告|链接可点击|顶部底部直达
 // @author       cccccc
 // @include      https://bbs.jjwxc.net/bindex.php*
 // @include      https://bbs.jjwxc.net/board.php*
@@ -12,13 +12,13 @@
 // @include      https://bbs.jjwxc.net/filterword.php*
 // @include      https://bbs.jjwxc.net/userinfo.php*
 // @include      https://bbs.jjwxc.net/postbypolice.php*
-// @updateURL    https://raw.github.com/cccccchin/MyScripts/master/%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA%2B.js
 // ==/UserScript==
 
 
 const up_button_icon = "https://s1.ax1x.com/2020/08/12/aXfqW4.png";
 const down_button_icon = "https://s1.ax1x.com/2020/08/12/aXfhyn.png";
-const bgColor = "#FFFFFF";
+const IS_DARK_MODE = Boolean(Number(localStorage.getItem('themeJJ') == null ? 0 : localStorage.getItem('themeJJ')));
+const bgColor = IS_DARK_MODE ? 'black' : 'white';
 const bgCss = { "background-color": bgColor };
 const borderCss = { "border-color": bgColor, "border": "none" };
 
@@ -37,11 +37,22 @@ console.log("POST_ID = " + POST_ID);
 
 var Style = {
     init() {
+        if(IS_DARK_MODE){
+            addGlobalStyle('*', { color: "#b2b2b2" });
+        }
         addGlobalStyle('body', bgCss);
         addGlobalStyle('.blockUI.blockMsg', bgCss);
         addGlobalStyle('.blockUI.blockMsg', { border: "1px solid #000000" });
         addGlobalStyle('tr', bgCss);
         addGlobalStyle('td', bgCss);
+
+        var themeChangeButton = document.createElement("div");
+        themeChangeButton.className = "themeButton";
+        themeChangeButton.style.cssText = "width:35px;height:35px;top: 20px;right: 30px;cursor:pointer;border:1px solid #666666;position: fixed;z-index: 10000; font-size: small;line-height: 35px;text-align: center;";
+        themeChangeButton.style.backgroundColor = 'white';
+        themeChangeButton.style.color = 'black';
+        themeChangeButton.textContent = "换肤";
+        document.getElementsByTagName("body")[0].appendChild(themeChangeButton);
     },
     removeAD() {
         $('.width_300').parent().remove();
@@ -59,7 +70,7 @@ var Style = {
             document.head.appendChild(blockUItNode);
         }
 
-        addGlobalStyle('a:link', { color: '#161616' });
+        addGlobalStyle('a:link', { color: IS_DARK_MODE ? '#b2b2b2' :'#161616' });
         addGlobalStyle('a:visited', { color: '#808080' });
         addGlobalStyle('a:hover', { color: '#bf7326' });
 
@@ -74,7 +85,7 @@ var Style = {
         addGlobalStyle('table', { "border-color": bgColor });
     },
     page() {
-        addGlobalStyle('.page-reply:link', { color: '#000000' });
+        addGlobalStyle('.page-reply:link', { color: IS_DARK_MODE ? '#b2b2b2' :'#000000' });
         addGlobalStyle('.page-reply:hover', { color: '#bf7326' });
         addGlobalStyle('.page-reply:visited', { color: '#808080' });
         addGlobalStyle('table', borderCss);
@@ -91,7 +102,7 @@ var Style = {
 }
 
 function addGlobalStyle(node, styleParams) {
-    var styleStr = JSON.stringify(styleParams)
+    var styleStr = JSON.stringify(styleParams);
     var styleF = styleStr.replace(/"([^"]*)"/g, "$1").replace(/[,]/g, ' !important;').replace('}', ' !important}');
     var css = node + styleF;
     // console.log(css);
@@ -114,11 +125,12 @@ function changeImgBg(imgId) {
 }
 
 function getPageParams(key, url) {
+    var str = '';
     if (typeof (url) == "undefined") {
         var search = window.location.search;
-        var str = search.substring(1, search.length);
+        str = search.substring(1, search.length);
     } else {
-        var str = url.split("?")[1];
+        str = url.split("?")[1];
     }
     let arr = str.split("&");
     let obj = new Object();
@@ -199,27 +211,40 @@ $(function () {
                 }
             }
         },
-        page() {
+        page(start) {
             var lzIdenti = $('.authorname').eq(0).find('font').eq(2).text();
             console.log("楼主 " + lzIdenti);
             let title = $('#msgsubject').text().split("主题：")[1]
             let blockUsers = localStorage['BlockUsers'] || '';
+            // console.log("start after = " + $('.authorname').length);
 
             $('.authorname').each(function (index, node) {
-                if (index == 0) {
-                    var lzAuthornameNode = $('.authorname').eq(0);
-                    $(node).find('a').eq(0).after(`<a class="board-bam" id="${POST_ID}" board="${BOARD_ID}" data="${title}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽该帖</a>`);
+                if (index < start) {
+                    return true;
                 }
 
                 var replyIdNode = $(node).find('font').eq(2)
                 var star = $(node).find('font').eq(-1)
                 $(star).remove()
 
-                var replyNameNode = $(replyIdNode).parent().contents()
+                var replyNameNode;
+
+                if (index == 0) {
+                    var lzAuthornameNode = $('.authorname').eq(0);
+                    $(node).find('a').eq(0).after(`<a class="board-bam" id="${POST_ID}" board="${BOARD_ID}" data="${title}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽该帖</a>`);
+                    replyNameNode = $(replyIdNode).parent().contents()
                     .filter(function () {
                         return this.nodeType == Node.TEXT_NODE;
                     });
+                } else {
+                    replyNameNode = $(node).contents()
+                    .filter(function () {
+                        return this.nodeType == Node.TEXT_NODE;
+                    });
+                }
+
                 var replyName = replyNameNode[0].wholeText.split("|")[0]
+                replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].substringData(0, replyNameNode[1].length - 2));
 
                 var displayName;
                 if ($(replyIdNode).text() == lzIdenti) {
@@ -391,7 +416,17 @@ $(function () {
             localStorage.setItem('BlockPosts', JSON.stringify(arr));
             $(node).parent().parent().remove()
         },
+        switchSkin() {
+            // 0是white 1是black
+            var oldTheme = Boolean(Number(localStorage.getItem('themeJJ') == null ? 0 : localStorage.getItem('themeJJ')));
+            var newTheme = Number(!oldTheme);
+            localStorage.setItem('themeJJ', newTheme);
+            location.reload();
+        },
         eventRegister() {
+            $(document).on('click', '.themeButton', function () {
+                Event.switchSkin(this);
+            })
             $(document).on('click', '.board-bam', function () {
                 Event.addBlockPost(this);
             })
@@ -422,13 +457,13 @@ $(function () {
         }
     }
 
-    function initPages() {
+    function initPages(start) {
         // Style.init();
         if (IS_BOARD) {
             initNodes.board()
             Event.eventRegister()
         } else if (IS_POST) {
-            initNodes.page();
+            initNodes.page(start);
             Event.eventRegister()
             //} else if (IS_SEARCH) {
             //initNodes.search();
@@ -436,123 +471,131 @@ $(function () {
             initNodes.filter();
             Event.eventRegister()
         }
-	}
+    }
 
     textToLink();
-	upAndDown()
-	initPages()
+    upAndDown();
+    initPages(0);
 
-	function upAndDown(){ //https://greasyfork.org/zh-CN/scripts/370556-%E4%B8%80%E4%B8%AA%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8%E5%92%8C%E5%88%B0%E8%BE%BE%E5%BA%95%E9%83%A8%E7%9A%84%E6%8C%89%E9%92%AE
-		//var $ = $ || window.$;
-		var canScrollMouseOver = false; //当鼠标在按钮上，但未点击时，页面能否自动滚动，true 为可以自动滚动，false 为不能自动滚动，可修改
-		var opacityMouseLeave = 0.5; //当鼠标不在按钮上时，按钮的不透明度，从 0.0（完全透明）到 1.0（完全不透明），可修改
-		var opacityMouseEnter = 0.8; //当鼠标在按钮上时，按钮的不透明度，从 0.0（完全透明）到 1.0（完全不透明），可修改
-		var clickScrollTime = 500; //点击按钮时，网页滚动到顶部或底部需要的时间，单位是毫秒，可修改
-		var needScrollTime; //网页可以自动滚动时，滚动需要的时间，由网页高度计算得出，这样不同网页都会匀速滚动
-		var isClicked = false; //按钮是否被点击
-		var initialHeight = 0; //网页向底部滚动时，需要滚动的距离
-		var scrollAction = 'undefined';
-		var scrollDirection = "down"; //网页滚动方向，down 为向下，up 为向上
-		var loadTimes = 0; //网页中动态增加数据的次数
-		var maxLoadTimes = 10; //最大的动态增加数据的次数（可修改），如果动态增加数据的次数超过这个值，则说明当前网页不适合执行此脚本，建议将其加入排除的网站当中
-		var goTopBottomButton = document.createElement("div");
-		goTopBottomButton.className = "goTopBottomButton";
-		goTopBottomButton.innerHTML = "<img class='toggleButton' style='width:35px;height:35px;display:block;cursor:pointer;'></img>"; //图片的宽和高可修改，原始图片宽高均为 40px
-		goTopBottomButton.style.position = "fixed";
-		goTopBottomButton.style.zIndex = 10000;
-		goTopBottomButton.style.bottom = "50px"; //距离网页底部 50px，可修改
-		goTopBottomButton.style.right = "30px"; //距离网页右边 30px，可修改
-		var toggleButton = goTopBottomButton.lastChild;
-		toggleButton.style.opacity = opacityMouseLeave; //按钮初始不透明度
-		toggleButton.src = down_button_icon; //按钮初始显示向下的图片
-		document.getElementsByTagName("body")[0].appendChild(goTopBottomButton);
+    $('#showmore_button').click(function() {
+        var start = $('.authorname').length;
+        console.log("start before = " + start);
+        setTimeout(function () {
+            initPages(start);
+        }, 3000)
+    });
 
-		/*按钮事件开始*/
-		toggleButton.addEventListener("mouseenter",function() { //鼠标移入时不透明度改变，如果 canScrollMouseOver 为 true，则网页可以自动滚动
-			isClicked = false;
-			if (canScrollMouseOver) {
-				if (scrollDirection == "up") {
-					needScrollTime = getScrollTop() * 10;
-					$('html,body').animate({scrollTop:'0px'},needScrollTime);
-				} else {
-					initialHeight = $(document).height();
-					var restHeight = $(document).height() - getScrollTop();
-					needScrollTime = restHeight * 10;
-					$('html,body').animate({scrollTop:initialHeight},needScrollTime,continueToBottom);
-				}
-			}
-			toggleButton.style.opacity = opacityMouseEnter;
-		})
-		toggleButton.addEventListener("mouseleave",function() { //鼠标移出时不透明度改变，如果 canScrollMouseOver 为 true，并且按钮未被点击，停止网页自动滚动的动画
-			if (canScrollMouseOver && !isClicked) {
-				$('html,body').stop();
-			}
-			toggleButton.style.opacity = opacityMouseLeave;
-		})
-		toggleButton.addEventListener("click",function() { //点击按钮时，网页滚动到顶部或底部
-			isClicked = true;
-			if (canScrollMouseOver) {
-				$('html,body').stop();
-			}
-			if (scrollDirection == "up") {
-				$('html,body').animate({scrollTop:'0px'},clickScrollTime);
-			} else {
-				initialHeight = $(document).height();
-				$('html,body').animate({scrollTop:initialHeight},clickScrollTime,continueToBottom);
-			}
-		})
-		/*按钮事件结束*/
+    function upAndDown(){ //https://greasyfork.org/zh-CN/scripts/370556-%E4%B8%80%E4%B8%AA%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8%E5%92%8C%E5%88%B0%E8%BE%BE%E5%BA%95%E9%83%A8%E7%9A%84%E6%8C%89%E9%92%AE
+        //var $ = $ || window.$;
+        var canScrollMouseOver = false; //当鼠标在按钮上，但未点击时，页面能否自动滚动，true 为可以自动滚动，false 为不能自动滚动，可修改
+        var opacityMouseLeave = 0.5; //当鼠标不在按钮上时，按钮的不透明度，从 0.0（完全透明）到 1.0（完全不透明），可修改
+        var opacityMouseEnter = 0.8; //当鼠标在按钮上时，按钮的不透明度，从 0.0（完全透明）到 1.0（完全不透明），可修改
+        var clickScrollTime = 500; //点击按钮时，网页滚动到顶部或底部需要的时间，单位是毫秒，可修改
+        var needScrollTime; //网页可以自动滚动时，滚动需要的时间，由网页高度计算得出，这样不同网页都会匀速滚动
+        var isClicked = false; //按钮是否被点击
+        var initialHeight = 0; //网页向底部滚动时，需要滚动的距离
+        var scrollAction = 'undefined';
+        var scrollDirection = "down"; //网页滚动方向，down 为向下，up 为向上
+        var loadTimes = 0; //网页中动态增加数据的次数
+        var maxLoadTimes = 10; //最大的动态增加数据的次数（可修改），如果动态增加数据的次数超过这个值，则说明当前网页不适合执行此脚本，建议将其加入排除的网站当中
+        var goTopBottomButton = document.createElement("div");
+        goTopBottomButton.className = "goTopBottomButton";
+        goTopBottomButton.innerHTML = "<img class='toggleButton' style='width:35px;height:35px;display:block;cursor:pointer;'></img>"; //图片的宽和高可修改，原始图片宽高均为 40px
+        goTopBottomButton.style.position = "fixed";
+        goTopBottomButton.style.zIndex = 10000;
+        goTopBottomButton.style.bottom = "50px"; //距离网页底部 50px，可修改
+        goTopBottomButton.style.right = "30px"; //距离网页右边 30px，可修改
+        var toggleButton = goTopBottomButton.lastChild;
+        toggleButton.style.opacity = opacityMouseLeave; //按钮初始不透明度
+        toggleButton.src = down_button_icon; //按钮初始显示向下的图片
+        document.getElementsByTagName("body")[0].appendChild(goTopBottomButton);
 
-		/*页面滚动监听*/
-		document.onscroll = function() {
-			if (scrollAction == 'undefined') {
-				scrollAction = window.pageYOffset;
-			}
-			var diffY = scrollAction - window.pageYOffset;
-			scrollAction = window.pageYOffset;
-			if (diffY < 0) {
-				changeDirection("down");
-			} else if (diffY > 0) {
-				changeDirection("up");
-			}
-			if (getScrollTop() == 0) {
-				changeDirection("down");
-			}
-			if (getScrollTop() + $(window).height() >= $(document).height()) {
-				changeDirection("up");
-			}
-		}
+        /*按钮事件开始*/
+        toggleButton.addEventListener("mouseenter",function() { //鼠标移入时不透明度改变，如果 canScrollMouseOver 为 true，则网页可以自动滚动
+            isClicked = false;
+            if (canScrollMouseOver) {
+                if (scrollDirection == "up") {
+                    needScrollTime = getScrollTop() * 10;
+                    $('html,body').animate({scrollTop:'0px'},needScrollTime);
+                } else {
+                    initialHeight = $(document).height();
+                    var restHeight = $(document).height() - getScrollTop();
+                    needScrollTime = restHeight * 10;
+                    $('html,body').animate({scrollTop:initialHeight},needScrollTime,continueToBottom);
+                }
+            }
+            toggleButton.style.opacity = opacityMouseEnter;
+        })
+        toggleButton.addEventListener("mouseleave",function() { //鼠标移出时不透明度改变，如果 canScrollMouseOver 为 true，并且按钮未被点击，停止网页自动滚动的动画
+            if (canScrollMouseOver && !isClicked) {
+                $('html,body').stop();
+            }
+            toggleButton.style.opacity = opacityMouseLeave;
+        })
+        toggleButton.addEventListener("click",function() { //点击按钮时，网页滚动到顶部或底部
+            isClicked = true;
+            if (canScrollMouseOver) {
+                $('html,body').stop();
+            }
+            if (scrollDirection == "up") {
+                $('html,body').animate({scrollTop:'0px'},clickScrollTime);
+            } else {
+                initialHeight = $(document).height();
+                $('html,body').animate({scrollTop:initialHeight},clickScrollTime,continueToBottom);
+            }
+        })
+        /*按钮事件结束*/
 
-		function changeDirection(direction) { //改变按钮方向
-			scrollDirection = direction;
-			toggleButton.src = direction == 'down' ? down_button_icon : up_button_icon;
-		}
+        /*页面滚动监听*/
+        document.onscroll = function() {
+            if (scrollAction == 'undefined') {
+                scrollAction = window.pageYOffset;
+            }
+            var diffY = scrollAction - window.pageYOffset;
+            scrollAction = window.pageYOffset;
+            if (diffY < 0) {
+                changeDirection("down");
+            } else if (diffY > 0) {
+                changeDirection("up");
+            }
+            if (getScrollTop() == 0) {
+                changeDirection("down");
+            }
+            if (getScrollTop() + $(window).height() >= $(document).height()) {
+                changeDirection("up");
+            }
+        }
 
-		function getScrollTop() { //获取垂直方向滑动距离
-			var scrollTop = 0;
-			if (document.documentElement && document.documentElement.scrollTop) {
-				scrollTop = document.documentElement.scrollTop;
-			} else if (document.body) {
-				scrollTop = document.body.scrollTop;
-			}
-			return scrollTop;
-		}
+        function changeDirection(direction) { //改变按钮方向
+            scrollDirection = direction;
+            toggleButton.src = direction == 'down' ? down_button_icon : up_button_icon;
+        }
 
-		function continueToBottom() { //判断页面是否继续下滑（主要是为了处理网页动态增加数据导致网页高度变化的情况）
-			var currentHeight = $(document).height();
-			if (initialHeight != currentHeight) {
-				if (loadTimes >= maxLoadTimes) {
-					$('html,body').stop();
-					alert(" 本网站有太多的异步请求，不适合执行脚本《" + GM_info.script.name + "》，建议加入排除网站当中，具体方法请查看脚本主页");
-					loadTimes = 0;
-					return;
-				}
-				loadTimes ++;
-				initialHeight = currentHeight;
-				$('html,body').animate({scrollTop:initialHeight},1000,continueToBottom);
-			}
-		}
-	}
+        function getScrollTop() { //获取垂直方向滑动距离
+            var scrollTop = 0;
+            if (document.documentElement && document.documentElement.scrollTop) {
+                scrollTop = document.documentElement.scrollTop;
+            } else if (document.body) {
+                scrollTop = document.body.scrollTop;
+            }
+            return scrollTop;
+        }
+
+        function continueToBottom() { //判断页面是否继续下滑（主要是为了处理网页动态增加数据导致网页高度变化的情况）
+            var currentHeight = $(document).height();
+            if (initialHeight != currentHeight) {
+                if (loadTimes >= maxLoadTimes) {
+                    $('html,body').stop();
+                    alert(" 本网站有太多的异步请求，不适合执行脚本《" + GM_info.script.name + "》，建议加入排除网站当中，具体方法请查看脚本主页");
+                    loadTimes = 0;
+                    return;
+                }
+                loadTimes ++;
+                initialHeight = currentHeight;
+                $('html,body').animate({scrollTop:initialHeight},1000,continueToBottom);
+            }
+        }
+    }
 
     function textToLink() { //https://github.com/lkytal/GM/blob/master/linkMix.user.js
         var clearLink, excludedTags, linkFilter, linkMixInit, linkPack, linkify, observePage, observer, setLink, urlPrefixes, url_regexp, xPath;
