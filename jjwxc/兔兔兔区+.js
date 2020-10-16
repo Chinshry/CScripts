@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         兔兔兔区+
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.1
 // @description  屏蔽用户|屏蔽帖子|发帖记录直达|快捷举报|楼主标记|只看楼主只看TA|白色主题夜间主题去广告|链接可点击|顶部底部直达
 // @author       cccccc
 // @include      https://bbs.jjwxc.net/bindex.php*
@@ -30,6 +30,7 @@ const IS_SEARCH = pathname.indexOf('search') >= 0;
 const IS_FILTER = pathname.indexOf('filterword') >= 0;
 const BOARD_ID = IS_BOARD || IS_POST || IS_SEARCH ? getPageParams('board') : '';
 const POST_ID = IS_POST ? getPageParams('id') : '';
+const PAGE = IS_POST ? getPageParams('page') : '';
 const BOARD_TYPE = IS_BOARD ? getPageParams('type') : '';
 
 console.log("BOARD_ID = " + BOARD_ID);
@@ -489,7 +490,13 @@ $(function () {
         console.log("start before = " + start);
         setTimeout(function () {
             initPages(start);
-        }, 3000)
+            if ($('#showmore_button').length == 0) {
+                let newPage = Number(PAGE) + 1;
+                let newPageHref = "?board=" + BOARD_ID +"&id=" + POST_ID + "&page=" + newPage;
+                $('#pager_top').append(`<a href="${newPageHref}">${newPage + 1}</a>`);
+                $('#pager_bottom').append(`<a href="${newPageHref}">${newPage + 1}</a>`);
+            }
+        },2000)
     });
 
     function upAndDown(){ //https://greasyfork.org/zh-CN/scripts/370556-%E4%B8%80%E4%B8%AA%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8%E5%92%8C%E5%88%B0%E8%BE%BE%E5%BA%95%E9%83%A8%E7%9A%84%E6%8C%89%E9%92%AE
