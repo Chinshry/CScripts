@@ -492,6 +492,9 @@ $(function () {
             initPages(start);
             if ($('#showmore_button').length == 0) {
                 let newPage = Number(PAGE) + 1;
+                if (isNaN(newPage)) {
+                    newPage = 1;
+                }
                 let newPageHref = "?board=" + BOARD_ID +"&id=" + POST_ID + "&page=" + newPage;
                 $('#pager_top').append(`<a href="${newPageHref}">${newPage + 1}</a>`);
                 $('#pager_bottom').append(`<a href="${newPageHref}">${newPage + 1}</a>`);
