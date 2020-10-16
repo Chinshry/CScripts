@@ -18,7 +18,7 @@
 const up_button_icon = "https://s1.ax1x.com/2020/08/12/aXfqW4.png";
 const down_button_icon = "https://s1.ax1x.com/2020/08/12/aXfhyn.png";
 const IS_DARK_MODE = Boolean(Number(localStorage.getItem('themeJJ') == null ? 0 : localStorage.getItem('themeJJ')));
-const bgColor = IS_DARK_MODE ? 'black' : 'white';
+const bgColor = IS_DARK_MODE ? '#1A1A1A' : 'white';
 const bgCss = { "background-color": bgColor };
 const borderCss = { "border-color": bgColor, "border": "none" };
 
@@ -39,7 +39,7 @@ console.log("POST_ID = " + POST_ID);
 var Style = {
     init() {
         if(IS_DARK_MODE){
-            addGlobalStyle('*', { color: "#b2b2b2" });
+            addGlobalStyle('*', { color: "#B2B2B2" });
         }
         addGlobalStyle('body', bgCss);
         addGlobalStyle('.blockUI.blockMsg', bgCss);
