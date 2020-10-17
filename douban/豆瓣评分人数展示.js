@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         DOU+
+// @name         豆瓣评分人数展示
 // @namespace    http://tampermonkey.net/
 // @version      1.0
 // @description  豆瓣网页版 选电影和电视剧TAB 新增评分人数、观看状态标签、去广告
