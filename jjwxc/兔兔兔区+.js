@@ -297,7 +297,7 @@ $(function () {
     var Event = {
         addBlockPost(node) {
             let id = $(node).attr('id')
-            let title = $(node).attr('data')
+            let title = $(node).attr('data').split("[2]")[0]
             let board = $(node).attr('board')
             console.log($('#boardtr_' + id).length)
             if (IS_NEWPOST){
