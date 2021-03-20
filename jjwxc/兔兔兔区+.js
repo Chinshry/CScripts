@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         兔兔兔区+
 // @namespace    http://tampermonkey.net/
-// @version      2.1.1
+// @version      2.1.2
 // @description  屏蔽用户|屏蔽帖子|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告|链接可点击|顶部底部直达
 // @author       cccccc
 // @include      https://bbs.jjwxc.net/bindex.php*
@@ -259,10 +259,11 @@ $(function () {
 
                 if ($(replyIdNode).text() == lzIdenti) {
                     displayName = "[楼主]" + replyName;
+                    $(replyIdNode).prev().after(`<a class="page-reply" id="replyName_${replyName}" href="https://bbs.jjwxc.net/search.php?act=search&board=${BOARD_ID}&keyword=${replyName}&topic=4" target="_blank" style="text-decoration: underline; text-underline-offset: 4px;">${displayName}</a>`);
                 } else {
                     displayName = replyName;
+                    $(replyIdNode).prev().after(`<a class="page-reply" id="replyName_${replyName}" href="https://bbs.jjwxc.net/search.php?act=search&board=${BOARD_ID}&keyword=${replyName}&topic=4" target="_blank">${displayName}</a>`);
                 }
-                $(replyIdNode).prev().after(`<a class="page-reply" id="replyName_${replyName}" href="https://bbs.jjwxc.net/search.php?act=search&board=${BOARD_ID}&keyword=${replyName}&topic=4" target="_blank">${displayName}</a>`);
 
                 if (index == 0) {
                     $(".board-bam").after(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
