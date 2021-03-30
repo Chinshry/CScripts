@@ -12,6 +12,7 @@
 // @include           https://bbs.jjwxc.net/filterword.php*
 // @include           https://bbs.jjwxc.net/userinfo.php*
 // @include           https://bbs.jjwxc.net/postbypolice.php*
+// @require           https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js
 // ==/UserScript==
 
 
@@ -111,17 +112,17 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
         idCount(){
             var div_side_bar = document.createElement("div");
             div_side_bar.id = "countIDButton";
-            div_side_bar.textContent = 'ID名单'
+            div_side_bar.textContent = 'ID统计'
             div_side_bar.style.cssText = 'cursor: pointer;font-size: 12px;line-height: 20px;width: 56px;height: 20px;text-align: center;overflow: hidden;position: fixed;right: 0px;top: 70px;padding: 4px 4px;background-color: white;z-index: 10001;border-radius: 8px 0px 0px 8px;box-shadow: rgba(0, 85, 255, 0.0980392) 0px 0px 20px 0px;border: 1px solid rgb(233, 234, 236);';
             div_side_bar.style.color = 'black';
             $('#boardname').first().after(div_side_bar);
 
             var div_data = document.createElement("div");
             div_data.id = 'countIDList'
-            div_data.style.cssText = 'display: none;position: fixed;height: 85%;width: 300px;right: 0px;top: 100px;z-index: 9999;';
+            div_data.style.cssText = 'display: none;position: fixed;height: 85%;width: 350px;right: 0px;top: 100px;z-index: 9999;';
             var div_data_inner = document.createElement("div");
             div_data_inner.id = 'countIDListInner'
-            div_data_inner.style.cssText = 'display: block;overflow: hidden;height: inherit;width: 300px;border-radius: 8px;box-shadow: rgba(106, 115, 133, 0.219608) 0px 6px 12px 0px;border: 1px solid black ;background-color: white;overflow: auto; white-space: nowrap;';
+            div_data_inner.style.cssText = 'display: block;overflow: hidden;height: inherit;border-radius: 8px;box-shadow: rgba(106, 115, 133, 0.219608) 0px 6px 12px 0px;border: 1px solid black ;background-color: white;overflow: auto; white-space: nowrap;';
             var div_data_text = document.createElement("div");
             div_data_text.id = 'countIDListText'
             div_data_text.style.cssText = 'padding: 10px; box-sizing: border-box;';
@@ -465,11 +466,11 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             },
             countID() {
                 // ID统计
-                if ($("#countIDButton").text() == "ID名单") {
+                if ($("#countIDButton").text() == "ID统计") {
                     getIDList()
                 } else {
                     $("#countIDList").hide();
-                    $("#countIDButton").text('ID名单');
+                    $("#countIDButton").text('ID统计');
                     $("#countIDButton").css('color', 'black');
                 }
             },
@@ -540,6 +541,10 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             var str =
               `<table style="background-color: #999933;">
                 <caption style="font-size: large;font-weight: bold;">共${dataSortIndex.length}个ID ${floorNum}层楼</caption>` +
+                `<tr><td style="text-align: center;">序号</td>
+                <td style="text-align: center;">ID</td>
+                <td style="text-align: center;">昵称</td>
+                <td style="text-align: center;">楼层</td></tr>` + 
               strBody + "</table>";
             console.log(str)
             $("#countIDListText").html(str);
