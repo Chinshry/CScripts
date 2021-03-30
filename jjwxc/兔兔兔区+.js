@@ -56,7 +56,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
 
             var themeChangeButton = document.createElement("div");
             themeChangeButton.className = "themeButton";
-            themeChangeButton.style.cssText = "width:35px;height:35px;top: 20px;right: 30px;cursor:pointer;border:1px solid #666666;position: fixed;z-index: 10000; font-size: small;line-height: 35px;text-align: center;";
+            themeChangeButton.style.cssText = "width:35px;height:35px;top: 20px;right: 15px;cursor:pointer;border:1px solid #666666;position: fixed;z-index: 10000; font-size: small;line-height: 35px;text-align: center;border-radius: 20px;";
             themeChangeButton.style.backgroundColor = 'white';
             themeChangeButton.style.color = 'black';
             themeChangeButton.textContent = "换肤";
@@ -113,7 +113,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             div_side_bar.id = "countIDButton";
             div_side_bar.textContent = 'ID名单'
             div_side_bar.style.cssText = 'cursor: pointer;font-size: 12px;line-height: 20px;width: 56px;height: 20px;text-align: center;overflow: hidden;position: fixed;right: 0px;top: 70px;padding: 4px 4px;background-color: white;z-index: 10001;border-radius: 8px 0px 0px 8px;box-shadow: rgba(0, 85, 255, 0.0980392) 0px 0px 20px 0px;border: 1px solid rgb(233, 234, 236);';
-            div_side_bar.style.color = '#0080c6';
+            div_side_bar.style.color = 'black';
             $('#boardname').first().after(div_side_bar);
 
             var div_data = document.createElement("div");
@@ -470,7 +470,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 } else {
                     $("#countIDList").hide();
                     $("#countIDButton").text('ID名单');
-                    $("#countIDButton").css('color', '#0080c6');
+                    $("#countIDButton").css('color', 'black');
                 }
             },
             eventRegister() {
@@ -528,11 +528,19 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
         initPages(0);
 
         function getIDListFinish() {
-            var str = '共' + dataSortIndex.length + '个ID<br>==================<br>'
-            dataSortIndex.forEach((key) =>{
-                str += (key + " | " + data_all[key].name + " | " + data_all[key].num)
-                str += `<br>`
+            var strBody = ''
+            var floorNum = 0
+            dataSortIndex.forEach((key, index) =>{
+                floorNum += data_all[key].num
+                strBody += `<tr><td style="text-align: center;">NO.${index + 1}</td>
+                <td style="text-align: center;">${key}</td>
+                <td style="text-align: center;">${data_all[key].name}</td>
+                <td style="text-align: center;">${data_all[key].num}</td></tr>`
             })
+            var str =
+              `<table style="background-color: #999933;">
+                <caption style="font-size: large;font-weight: bold;">共${dataSortIndex.length}个ID ${floorNum}层楼</caption>` +
+              strBody + "</table>";
             console.log(str)
             $("#countIDListText").html(str);
 
@@ -566,6 +574,9 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                                 var id = dataList[key].readerIdenti.split(">")[1].split("<")[0]
                                 if(data_all[id] != undefined){
                                     data_all[id].num = data_all[id].num + 1
+                                    if(data_all[id].name.search("\\*") != -1 && dataList[key].author.search("\\*") == -1){
+                                        data_all[id].name = dataList[key].author
+                                    }
                                 } else{
                                     data_all[id] = {'name': dataList[key].author, 'num' : 1}
                                 }
@@ -575,6 +586,9 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                                 var id = value.readerIdenti.split(">")[1].split("<")[0]
                                 if(data_all[id] != undefined){
                                     data_all[id].num = data_all[id].num + 1
+                                    if(data_all[id].name.search("\\*") != -1 && value.author.search("\\*") == -1){
+                                        data_all[id].name = value.author
+                                    }
                                 } else{
                                     data_all[id] = {'name': value.author, 'num' : 1}
                                 }
