@@ -1,6 +1,8 @@
 # 兔兔兔区+
 
-一个关于兔区的脚本  
+一个关于兔区的脚本
+
+[👉GitHub](https://github.com/Chinshry/MyScripts/tree/master/jjwxc) | [👉Greasy Fork](https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA)
 
 ## 目录
 
