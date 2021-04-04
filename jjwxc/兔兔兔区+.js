@@ -40,6 +40,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
 
     var id_all = {}
     var reply_all = []
+    var replyStrBody = ''
     var dataSortIndex = []
 
     console.log("BOARD_ID = " + BOARD_ID);
@@ -525,16 +526,21 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             filterPost() {
                 // 搜索过滤
                 var searchKey = document.getElementById("postSearchInput").value
+
+                var content = document.getElementById("postSearchListText")
+                var values = replyStrBody.split(searchKey);
+                content.innerHTML = values.join('<span style="background:yellow;">' + searchKey + '</span>');
+                
                 var FloatReplyArr = $('.FloatReplyBody');
+                var searchResultNum = 0
                 for(let item of FloatReplyArr){
-                    console.log(item.innerHTML)
                     if(item.innerHTML.search(searchKey) == -1){
                         $(item).parent().css('visibility', 'collapse')
                     } else {
                         $(item).parent().css('visibility', 'visible')
+                        searchResultNum += 1
                     }
                 }
-                var searchResultNum = $('#postSearchListText').children().eq(0).children().eq(1).children().length - 1
                 var titleStr = `搜索完毕 共${searchResultNum}层提及`
                 $('#tableTitle').text(titleStr)
             },
@@ -627,9 +633,9 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             var strBody = ''
             reply_all.forEach((value, index) =>{
                 strBody += `<tr style="vertical-align:top"><td style="text-align:center;">NO.${index + 1}</td>
-                <td style="text-align:center;">${value.author}</td>
+                <td class="FloatReplyBody" style="text-align:center;width: 120px;white-space:pre-line;">${value.author}</td>
                 <td style="text-align:center;">${value.floor}</td>
-                <td class="FloatReplyBody"style="text-align:left;width:500px; white-space: pre-line;">${value.replybody}</td></tr>`
+                <td class="FloatReplyBody" style="text-align:left;white-space: pre-line;">${value.replybody}</td></tr>`
             })
             var str =
                 `<table style="background-color: #999933;">
@@ -640,10 +646,12 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 <td style="text-align:center;">回复内容</td></tr>` +
                 strBody + "</table>";
             $("#postSearchListText").html(str);
-            var tableImgArr = $('#postSearchListText').find('img').toArray();
+            var tableImgArr = $('#postSearchListText').find('img')
             for(let item of tableImgArr){
-                item.style.height = "150px"
+                $(item).css("max-height","150px")
+                $(item).css("max-width","140px")
             }
+            replyStrBody = $("#postSearchListText").html();
 
             $("#postSearchList").show();
             $("#postSearchButton").text('隐藏窗口');
