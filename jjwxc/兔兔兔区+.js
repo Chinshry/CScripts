@@ -530,7 +530,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 var content = document.getElementById("postSearchListText")
                 var values = replyStrBody.split(searchKey);
                 content.innerHTML = values.join('<span style="background:yellow;">' + searchKey + '</span>');
-                
+
                 var FloatReplyArr = $('.FloatReplyBody');
                 var searchResultNum = 0
                 for(let item of FloatReplyArr){
@@ -631,18 +631,16 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
 
         function getReplyListFinish() {
             var strBody = ''
-            reply_all.forEach((value, index) =>{
-                strBody += `<tr style="vertical-align:top"><td style="text-align:center;">NO.${index + 1}</td>
+            reply_all.forEach((value) =>{
+                strBody += `<tr style="vertical-align:top"><td style="text-align:center;">${value.floor}</td>
                 <td class="FloatReplyBody" style="text-align:center;width: 120px;white-space:pre-line;">${value.author}</td>
-                <td style="text-align:center;">${value.floor}</td>
-                <td class="FloatReplyBody" style="text-align:left;white-space: pre-line;">${value.replybody}</td></tr>`
+                <td class="FloatReplyBody" style="text-align:left;white-space: pre-line;word-break: break-word;">${value.replybody}</td></tr>`
             })
             var str =
                 `<table style="background-color: #999933;">
                 <caption id="tableTitle" style="font-size:large;font-weight:bold;">初始化完毕 本帖共${reply_all.length}层楼</caption>` +
-                `<tr><td style="text-align: center;">序号</td>
+                `<tr><td style="text-align: center;">楼层</td>
                 <td style="text-align:center;">昵称</td>
-                <td style="text-align:center;">所在楼层</td>
                 <td style="text-align:center;">回复内容</td></tr>` +
                 strBody + "</table>";
             $("#postSearchListText").html(str);
