@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name             兔兔兔区+
 // @namespace     https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA
-// @version           2.1.3
-// @description     屏蔽用户|屏蔽帖子|ID统计|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告|链接可点击|顶部底部直达
+// @version           2.1.4
+// @description     屏蔽用户|屏蔽帖子|ID统计|帖内搜索|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告|链接可点击|顶部底部直达
 // @author            chinshry
 // @include           https://bbs.jjwxc.net/bindex.php*
 // @include           https://bbs.jjwxc.net/board.php*
@@ -38,7 +38,8 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
     const PAGE = IS_POST ? getPageParams('page') : '';
     const BOARD_TYPE = IS_BOARD ? getPageParams('type') : '';
 
-    var data_all = {}
+    var id_all = {}
+    var reply_all = []
     var dataSortIndex = []
 
     console.log("BOARD_ID = " + BOARD_ID);
@@ -88,7 +89,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
 
             addGlobalStyle('a.board-report:link', { color: '#669900' });
             addGlobalStyle('a.board-report:hover', { color: '#bf7326' });
-        },
+       },
         search() {
             Style.removeAD();
             addGlobalStyle('table', { "border-color": bgColor });
@@ -119,7 +120,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
 
             var div_data = document.createElement("div");
             div_data.id = 'countIDList'
-            div_data.style.cssText = 'display: none;position: fixed;height: 85%;width: 350px;right: 0px;top: 100px;z-index: 9999;';
+            div_data.style.cssText = 'display: none;position: fixed;height: 85%;width: 350px;right: 0px;top: 140px;z-index: 9999;';
             var div_data_inner = document.createElement("div");
             div_data_inner.id = 'countIDListInner'
             div_data_inner.style.cssText = 'display: block;overflow: hidden;height: inherit;border-radius: 8px;box-shadow: rgba(106, 115, 133, 0.219608) 0px 6px 12px 0px;border: 1px solid black ;background-color: white;overflow: auto; white-space: nowrap;';
@@ -128,6 +129,42 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             div_data_text.style.cssText = 'padding: 10px; box-sizing: border-box;';
 
             div_data.append(div_data_inner);
+            div_data_inner.append(div_data_text);
+
+            document.body.appendChild(div_data);
+        },
+        postSearch(){
+            var div_side_bar = document.createElement("div");
+            div_side_bar.id = "postSearchButton";
+            div_side_bar.textContent = '贴内搜索'
+            div_side_bar.style.cssText = 'cursor: pointer;font-size: 12px;line-height: 20px;width: 56px;height: 20px;text-align: center;overflow: hidden;position: fixed;right: 0px;top: 105px;padding: 4px 4px;background-color: white;z-index: 10001;border-radius: 8px 0px 0px 8px;box-shadow: rgba(0, 85, 255, 0.0980392) 0px 0px 20px 0px;border: 1px solid rgb(233, 234, 236);';
+            div_side_bar.style.color = 'black';
+            $('#boardname').first().after(div_side_bar);
+
+
+            var div_data = document.createElement("div");
+            div_data.id = 'postSearchList'
+            div_data.style.cssText = 'text-align:center; display: none;position: fixed;height: 85%;width: 710px;right: 0px;top: 140px;z-index: 9999;';
+            var div_data_inner = document.createElement("div");
+            div_data_inner.id = 'postSearchListInner'
+            div_data_inner.style.cssText = 'padding: 10px; display: block;overflow: hidden;height: inherit;border-radius: 8px;box-shadow: rgba(106, 115, 133, 0.219608) 0px 6px 12px 0px;border: 1px solid black ;background-color: white;overflow: auto; white-space: nowrap;';
+            var div_data_text = document.createElement("div");
+            div_data_text.id = 'postSearchListText'
+            div_data_text.style.cssText = 'box-sizing: border-box;';
+
+            var div_data_input = document.createElement("input");
+            div_data_input.id = 'postSearchInput'
+            div_data_input.type = 'text'
+            div_data_input.size = '10'
+            var div_data_search_btn = document.createElement("input");
+            div_data_search_btn.id = 'postSearchStart'
+            div_data_search_btn.type = 'button'
+            div_data_search_btn.style.cssText = 'margin: 10px 0px 20px 10px;';
+            div_data_search_btn.value = '搜索'
+
+            div_data.append(div_data_inner);
+            div_data_inner.append(div_data_input);
+            div_data_inner.append(div_data_search_btn);
             div_data_inner.append(div_data_text);
 
             document.body.appendChild(div_data);
@@ -185,6 +222,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
         } else if (IS_POST) {
             Style.page();
             Style.idCount();
+            Style.postSearch();
         } else if (IS_SEARCH) {
             Style.search();
         } else if (IS_FILTER) {
@@ -467,16 +505,48 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             countID() {
                 // ID统计
                 if ($("#countIDButton").text() == "ID统计") {
-                    getIDList()
+                    getReplyList(0, 1)
                 } else {
                     $("#countIDList").hide();
                     $("#countIDButton").text('ID统计');
                     $("#countIDButton").css('color', 'black');
                 }
             },
+            postSearch() {
+                // 帖内搜索
+                if ($("#postSearchButton").text() == "贴内搜索") {
+                    getReplyList(0, 2)
+                } else {
+                    $("#postSearchList").hide();
+                    $("#postSearchButton").text('贴内搜索');
+                    $("#postSearchButton").css('color', 'black');
+                }
+            },
+            filterPost() {
+                // 搜索过滤
+                var searchKey = document.getElementById("postSearchInput").value
+                var FloatReplyArr = $('.FloatReplyBody');
+                for(let item of FloatReplyArr){
+                    console.log(item.innerHTML)
+                    if(item.innerHTML.search(searchKey) == -1){
+                        $(item).parent().css('visibility', 'collapse')
+                    } else {
+                        $(item).parent().css('visibility', 'visible')
+                    }
+                }
+                var searchResultNum = $('#postSearchListText').children().eq(0).children().eq(1).children().length - 1
+                var titleStr = `搜索完毕 共${searchResultNum}层提及`
+                $('#tableTitle').text(titleStr)
+            },
             eventRegister() {
                 $(document).on('click', '#countIDButton', function () {
                     Event.countID(this);
+                })
+                $(document).on('click', '#postSearchButton', function () {
+                    Event.postSearch(this);
+                })
+                $(document).on('click', '#postSearchStart', function () {
+                    Event.filterPost(this);
                 })
                 $(document).on('click', '.themeButton', function () {
                     Event.switchSkin(this);
@@ -528,25 +598,24 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
         upAndDown();
         initPages(0);
 
-        function getIDListFinish() {
+        function countIDListFinish() {
             var strBody = ''
             var floorNum = 0
             dataSortIndex.forEach((key, index) =>{
-                floorNum += data_all[key].num
+                floorNum += id_all[key].num
                 strBody += `<tr><td style="text-align: center;">NO.${index + 1}</td>
                 <td style="text-align: center;">${key}</td>
-                <td style="text-align: center;">${data_all[key].name}</td>
-                <td style="text-align: center;">${data_all[key].num}</td></tr>`
+                <td style="text-align: center;">${id_all[key].name}</td>
+                <td style="text-align: center;">${id_all[key].num}</td></tr>`
             })
             var str =
-              `<table style="background-color: #999933;">
+                `<table style="background-color: #999933;">
                 <caption style="font-size: large;font-weight: bold;">共${dataSortIndex.length}个ID ${floorNum}层楼</caption>` +
                 `<tr><td style="text-align: center;">序号</td>
                 <td style="text-align: center;">ID</td>
                 <td style="text-align: center;">昵称</td>
-                <td style="text-align: center;">楼层</td></tr>` + 
-              strBody + "</table>";
-            console.log(str)
+                <td style="text-align: center;">楼层</td></tr>` +
+                strBody + "</table>";
             $("#countIDListText").html(str);
 
             $("#countIDList").show();
@@ -554,7 +623,34 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             $("#countIDButton").css('color', '#ff8e29');
         }
 
-        function getIDList(page=0) {
+        function getReplyListFinish() {
+            var strBody = ''
+            reply_all.forEach((value, index) =>{
+                strBody += `<tr style="vertical-align:top"><td style="text-align:center;">NO.${index + 1}</td>
+                <td style="text-align:center;">${value.author}</td>
+                <td style="text-align:center;">${value.floor}</td>
+                <td class="FloatReplyBody"style="text-align:left;width:500px; white-space: pre-line;">${value.replybody}</td></tr>`
+            })
+            var str =
+                `<table style="background-color: #999933;">
+                <caption id="tableTitle" style="font-size:large;font-weight:bold;">初始化完毕 本帖共${reply_all.length}层楼</caption>` +
+                `<tr><td style="text-align: center;">序号</td>
+                <td style="text-align:center;">昵称</td>
+                <td style="text-align:center;">所在楼层</td>
+                <td style="text-align:center;">回复内容</td></tr>` +
+                strBody + "</table>";
+            $("#postSearchListText").html(str);
+            var tableImgArr = $('#postSearchListText').find('img').toArray();
+            for(let item of tableImgArr){
+                item.style.height = "150px"
+            }
+
+            $("#postSearchList").show();
+            $("#postSearchButton").text('隐藏窗口');
+            $("#postSearchButton").css('color', '#ff8e29');
+        }
+
+        function getReplyList(page=0, fun) {
             $.ajax({
                 type: 'POST',
                 url: "https://bbs.jjwxc.net/frameindex.php?c=showMsg&action=showMoreReply",
@@ -570,45 +666,71 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 async:true,
                 success: function (response) {
                     var result = JSON.parse(response);
-                    console.log("=======getIDList=======" + (page + 1))
-                    $("#countIDButton").text('第' + (page + 1) + '页');
-                    if(result.data.replies.length!=0){
-                        var dataList = result.data.replies
-                        if(dataList instanceof Object){
-                            Object.keys(dataList).forEach((key) =>{
-                                var id = dataList[key].readerIdenti.split(">")[1].split("<")[0]
-                                if(data_all[id] != undefined){
-                                    data_all[id].num = data_all[id].num + 1
-                                    if(data_all[id].name.search("\\*") != -1 && dataList[key].author.search("\\*") == -1){
-                                        data_all[id].name = dataList[key].author
-                                    }
-                                } else{
-                                    data_all[id] = {'name': dataList[key].author, 'num' : 1}
-                                }
-                            })
-                        } else {
-                            dataList.forEach((value) =>{
-                                var id = value.readerIdenti.split(">")[1].split("<")[0]
-                                if(data_all[id] != undefined){
-                                    data_all[id].num = data_all[id].num + 1
-                                    if(data_all[id].name.search("\\*") != -1 && value.author.search("\\*") == -1){
-                                        data_all[id].name = value.author
-                                    }
-                                } else{
-                                    data_all[id] = {'name': value.author, 'num' : 1}
-                                }
-                            })
+                    console.log("=======getReplyList=======" + (page + 1))
+                    switch (fun) {
+                        case 1: {
+                            countIDList(result, page)
+                            break
                         }
-                        getIDList(page + 1)
-                    } else {
-                        dataSortIndex = Object.keys(data_all).sort(function(a,b){ return data_all[b].num-data_all[a].num;});
-                        getIDListFinish()
+                        case 2: {
+                            postSearchList(result, page)
+                            break
+                        }
                     }
                 },
                 error: function (err) {
                     console.log("错误 " + err);
                 }
             });
+        }
+
+        function countIDList(result, page){
+            $("#countIDButton").text('第' + (page + 1) + '页');
+            if (result.data.replies.length != 0) {
+                var dataList = result.data.replies
+                if(dataList instanceof Object){
+                    Object.keys(dataList).forEach((key) =>{
+                        getOutputList(dataList[key])
+                    })
+                } else {
+                    dataList.forEach((value) =>{
+                        getOutputList(value)
+                    })
+                }
+                getReplyList(page + 1, 1)
+            } else {
+                dataSortIndex = Object.keys(id_all).sort(function(a,b){ return id_all[b].num-id_all[a].num;});
+                countIDListFinish()
+            }
+        }
+
+        function postSearchList(result, page){
+            $("#postSearchButton").text('第' + (page + 1) + '页');
+            if (result.data.replies.length != 0) {
+                var dataList = result.data.replies
+                if(dataList instanceof Object){
+                    Object.keys(dataList).forEach((key) =>{
+                        reply_all = reply_all.concat(dataList[key])
+                    })
+                } else {
+                    reply_all = reply_all.concat(dataList)
+                }
+                getReplyList(page + 1, 2)
+            } else {
+                getReplyListFinish()
+            }
+        }
+
+        function getOutputList(value) {
+            var id = value.readerIdenti.split(">")[1].split("<")[0];
+            if (id_all[id] != undefined) {
+                id_all[id].num = id_all[id].num + 1;
+                if (id_all[id].name.search("\\*") != -1 && value.author.search("\\*") == -1) {
+                    id_all[id].name = value.author;
+                }
+            } else {
+                id_all[id] = { name: value.author, num: 1 };
+            }
         }
 
         $('#showmore_button').click(function() {
@@ -646,7 +768,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             goTopBottomButton.innerHTML = "<img class='toggleButton' style='width:35px;height:35px;display:block;cursor:pointer;'></img>"; //图片的宽和高可修改，原始图片宽高均为 40px
             goTopBottomButton.style.position = "fixed";
             goTopBottomButton.style.zIndex = 10000;
-            goTopBottomButton.style.bottom = "50px"; //距离网页底部 50px，可修改
+            goTopBottomButton.style.bottom = "20px"; //距离网页底部 50px，可修改
             goTopBottomButton.style.right = "30px"; //距离网页右边 30px，可修改
             var toggleButton = goTopBottomButton.lastChild;
             toggleButton.style.opacity = opacityMouseLeave; //按钮初始不透明度
