@@ -506,7 +506,11 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             countID() {
                 // ID统计
                 if ($("#countIDButton").text() == "ID统计") {
-                    getReplyList(0, 1)
+                    if (dataSortIndex.length != 0){
+                        countIDListFinish()
+                    } else {
+                        getReplyList(0, 1)
+                    }
                 } else {
                     $("#countIDList").hide();
                     $("#countIDButton").text('ID统计');
@@ -516,7 +520,11 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             postSearch() {
                 // 帖内搜索
                 if ($("#postSearchButton").text() == "贴内搜索") {
-                    getReplyList(0, 2)
+                    if (reply_all.length != 0){
+                        getReplyListFinish()
+                    } else {
+                        getReplyList(0, 2)
+                    }
                 } else {
                     $("#postSearchList").hide();
                     $("#postSearchButton").text('贴内搜索');
