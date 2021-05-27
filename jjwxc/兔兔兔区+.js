@@ -316,14 +316,18 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                         });
                     }
 
-                    if (start == 0) {
+                    if (index == 0) {
                         replyName = replyNameNode[0].wholeText.split("|")[0];
                         replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].wholeText.split("留言")[0]);
                         $(replyNameNode)[0].remove();
-                    } else {
+                    } else if (start != 0) {
                         replyName = replyNameNode[2].wholeText.split("|")[0];
                         replyNameNode[3].replaceData(0, replyNameNode[3].length, replyNameNode[3].wholeText.split("留言")[0]);
                         $(replyNameNode)[2].remove();
+                    } else {
+                        replyName = replyNameNode[1].wholeText.split("|")[0];
+                        replyNameNode[2].replaceData(0, replyNameNode[2].length, replyNameNode[2].wholeText.split("留言")[0]);
+                        $(replyNameNode)[1].remove();
                     }
 
                     var displayName;
