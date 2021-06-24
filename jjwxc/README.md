@@ -57,9 +57,10 @@
 
    设置-脚本-右上角加号-新建  ，会自动更新，无需手动。 
    域名：*  
-   代码填写如下：
+   代码填写如下：（不包括```所在行）
 
     ```javascript
+    
     function shouldRun(){
         const whiteList = ['bindex','board','newpost','showmsg','search','filterword','userinfo','postbypolice'];
         const hostname = window.location.hostname;
@@ -84,12 +85,13 @@
         scriptMy.src = 'https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA/code/%25E5%2585%2594%25E5%2585%2594%25E5%2585%2594%25E5%258C%25BA%252B.user.js';
         document.head.appendChild(scriptMy);
     }())
+    
     ```
 
 ### IOS端
 
 * 使用Alook (付费App)  
-设置-自定义设置-javascript扩展-右上角加号-主动扩展  
+设置-自定义设置-javascript扩展-右上角加号-被动扩展  
 名称随意填写，代码段填写同 [via浏览器](#via) 。会自动更新，无需手动。 
 
 ## 主要功能
