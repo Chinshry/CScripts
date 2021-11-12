@@ -15,7 +15,6 @@
     * 白色主题
     * 夜间主题
     * 去广告
-    * 顶部直达 & 底部直达
     * 链接可点击
   * [板块页](#板块页)
     * [屏蔽帖子&举报帖子](#blockAndReport)
@@ -100,8 +99,6 @@
 * 夜间主题  
   点击右上角 **换肤** 即可切换 **白色主题** 及 **夜间主题** ，全局生效。
 * 去广告
-* [顶部直达&底部直达](https://greasyfork.org/zh-CN/scripts/370556-%E4%B8%80%E4%B8%AA%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8%E5%92%8C%E5%88%B0%E8%BE%BE%E5%BA%95%E9%83%A8%E7%9A%84%E6%8C%89%E9%92%AE
-)
 * [链接可点击](https://github.com/lkytal/GM/blob/master/linkMix.user.js)
 
 ### 板块页
