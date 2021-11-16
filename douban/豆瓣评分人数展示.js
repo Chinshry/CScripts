@@ -6,6 +6,7 @@
 // @author       cccccc
 // @match        https://movie.douban.com/tv*
 // @match        https://movie.douban.com/explore*
+// @license      GPL-3.0 License
 // @grant        none
 // ==/UserScript==
 

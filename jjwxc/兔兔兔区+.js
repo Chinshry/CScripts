@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name             兔兔兔区+
-// @namespace     https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA
-// @version           2.1.4
-// @description     屏蔽用户|屏蔽帖子|ID统计|帖内搜索|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告
+// @name              兔兔兔区+
+// @namespace         https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA
+// @version           2.1.5
+// @description       屏蔽用户|屏蔽帖子|ID统计|帖内搜索|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告
 // @author            chinshry
 // @include           https://bbs.jjwxc.net/bindex.php*
 // @include           https://bbs.jjwxc.net/board.php*
@@ -12,12 +12,11 @@
 // @include           https://bbs.jjwxc.net/filterword.php*
 // @include           https://bbs.jjwxc.net/userinfo.php*
 // @include           https://bbs.jjwxc.net/postbypolice.php*
+// @license           GPL-3.0 License
 // @require           https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js
 // ==/UserScript==
 
 
-const up_button_icon = "https://s1.ax1x.com/2020/08/12/aXfqW4.png";
-const down_button_icon = "https://s1.ax1x.com/2020/08/12/aXfhyn.png";
 const IS_DARK_MODE = Boolean(Number(localStorage.getItem('themeJJ') == null ? 0 : localStorage.getItem('themeJJ')));
 const bgColor = IS_DARK_MODE ? '#1A1A1A' : 'white';
 const bgCss = { "background-color": bgColor };
