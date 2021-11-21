@@ -37,6 +37,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
     const PAGE = IS_POST ? getPageParams('page') : '';
     const BOARD_TYPE = IS_BOARD ? getPageParams('type') : '';
 
+    var page_count = 0
     var id_all = {}
     var reply_all = []
     var replyStrBody = ''
@@ -286,7 +287,6 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 console.log("楼主 " + lzIdenti);
                 let title = $('#msgsubject').text().split("主题：")[1]
                 let blockUsers = localStorage.BlockUsers || '';
-                // console.log("start after = " + $('.authorname').length);
 
                 $('.authorname').each(function (index, node) {
                     if (index < start) {
@@ -359,6 +359,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                         }
                     }
                 })
+                page_count = $('.authorname').length
             },
             filter() {
                 let oldTab = document.querySelector("body > center > b");
@@ -611,7 +612,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
             }
         }
 
-        initPages(0);
+        initPages(page_count);
 
         function countIDListFinish() {
             var strBody = ''
@@ -749,10 +750,8 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
         }
 
         $('#showmore_button').click(function() {
-            var start = $('.authorname').length;
-            console.log("start before = " + start);
             setTimeout(function () {
-                initPages(start);
+                initPages(page_count);
                 if ($('#showmore_button').length == 0) {
                     let newPage = Number(PAGE) + 1;
                     if (isNaN(newPage)) {
