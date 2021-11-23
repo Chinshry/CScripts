@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name              兔兔兔区+
 // @namespace         https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA
-// @version           2.1.5
+// @version           2.1.6
 // @description       屏蔽用户|屏蔽帖子|ID统计|帖内搜索|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告
 // @author            chinshry
 // @include           https://bbs.jjwxc.net/bindex.php*
@@ -10,6 +10,7 @@
 // @include           https://bbs.jjwxc.net/showmsg.php*
 // @include           https://bbs.jjwxc.net/search.php*
 // @include           https://bbs.jjwxc.net/filterword.php*
+// @include           https://bbs.jjwxc.net/backend/filterReader.php*
 // @include           https://bbs.jjwxc.net/userinfo.php*
 // @include           https://bbs.jjwxc.net/postbypolice.php*
 // @license           GPL-3.0 License
@@ -27,7 +28,7 @@ const IS_NEWPOST = pathname.indexOf('newpost') >= 0;
 const IS_BOARD = IS_NEWPOST || pathname.indexOf('board') >= 0;
 const IS_POST = pathname.indexOf('showmsg') >= 0;
 const IS_SEARCH = pathname.indexOf('search') >= 0;
-const IS_FILTER = pathname.indexOf('filterword') >= 0;
+const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filterReader') >= 0;
 
 (function($) {
     'use strict';
@@ -340,12 +341,12 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                     }
 
                     if (index == 0) {
-                        $(".board-bam").after(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
-                        $(".board-bam").after(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
+                        // $(".board-bam").after(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
+                        // $(".board-bam").after(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
                     } else {
-                        $(node).next().prepend(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">只看TA</a>`);;
-                        $(node).next().prepend(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
-                        $(node).next().prepend(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
+                        $(node).next().append(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:0px">只看TA</a>`);;
+                        // $(node).next().prepend(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
+                        // $(node).next().prepend(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
                     }
 
                     if (blockUsers !== '') {
@@ -365,7 +366,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 let oldTab = document.querySelector("body > center > b");
                 $(oldTab).attr("class", "filter-bam-keyword");
                 $(oldTab).attr("style", "font-size:20px");;
-                $(oldTab).after(`<b class="filter-bam-user">屏蔽用户设置</b>`);
+                // $(oldTab).after(`<b class="filter-bam-user">屏蔽用户设置</b>`);
                 $(oldTab).after(`<b class="filter-bam-post">屏蔽帖子设置</b>`);
             }
         }
@@ -451,8 +452,14 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0;
                 let arr = localStorage.getItem('BlockPosts') ? JSON.parse(localStorage.getItem('BlockPosts')) : {};
                 console.log(arr);
 
-                $("table").eq(1).attr("style", "visibility:hidden");
-                let blockTable = $("table").eq(2).children().toArray()[0]
+                let tableIndex = 2
+                if (pathname.indexOf('filterword') >= 0) { 
+                    tableIndex = 3
+                    $("table").eq(tableIndex - 2).attr("style", "display:none");
+                }
+
+                $("table").eq(tableIndex - 1).attr("style", "display:none");
+                let blockTable = $("table").eq(tableIndex).children().toArray()[0]
                 $(blockTable).parent().next().attr("style", "visibility:hidden");
                 let tips = $(blockTable).parent().next().next().next().find('tr').eq(0)
                 tips.html(`<td>温馨提示：<br>在主页点击“屏蔽”和帖子首楼点击“屏蔽此贴”的帖子会被添加到该列表，刷新仍旧有效。<br><br></td>`)
