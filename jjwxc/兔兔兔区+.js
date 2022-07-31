@@ -293,8 +293,8 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                     if (index < start) {
                         return true;
                     }
-                    var star = $(node).find('font').eq(-1);
-                    $(star).remove();
+                    var star = $(node).find('font').eq(-2);
+                    $(star).text("  " + $(star).text().split("来自")[1]);
 
                     var replyIdNode;
                     var replyNameNode;
@@ -453,7 +453,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                 console.log(arr);
 
                 let tableIndex = 2
-                if (pathname.indexOf('filterword') >= 0) { 
+                if (pathname.indexOf('filterword') >= 0) {
                     tableIndex = 3
                     $("table").eq(tableIndex - 2).attr("style", "display:none");
                 }
