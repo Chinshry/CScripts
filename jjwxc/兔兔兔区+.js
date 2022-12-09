@@ -316,6 +316,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         });
                     }
 
+                    /**
                     if (index == 0) {
                         replyName = replyNameNode[0].wholeText.split("|")[0];
                         replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].wholeText.split("留言")[0]);
@@ -329,6 +330,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         replyNameNode[2].replaceData(0, replyNameNode[2].length, replyNameNode[2].wholeText.split("留言")[0]);
                         $(replyNameNode)[1].remove();
                     }
+                    **/
 
                     var displayName;
 
@@ -344,7 +346,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         // $(".board-bam").after(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
                         // $(".board-bam").after(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
                     } else {
-                        $(node).next().append(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:0px">只看TA</a>`);;
+                        $(node).parent().next().children().eq(0).append(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:0px">只看TA</a>`);;
                         // $(node).next().prepend(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
                         // $(node).next().prepend(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
                     }

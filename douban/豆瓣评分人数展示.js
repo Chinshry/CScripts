@@ -6,7 +6,6 @@
 // @author       cccccc
 // @match        https://movie.douban.com/tv*
 // @match        https://movie.douban.com/explore*
-// @license      GPL-3.0 License
 // @grant        none
 // ==/UserScript==
 
@@ -28,7 +27,7 @@
             $('.extra').remove();
         }
 
-        function addScore(index) {
+        async function addScore(index) {
             var items = $('.item');
 
             $.each(items, function (i, node) {
@@ -38,48 +37,69 @@
                 let id = $(node).attr('href').split("/")[4];
                 $.ajax({
                     type: 'GET',
-                    url: 'https://movie.douban.com/subject/' + id,
+                    url: 'https://m.douban.com/rexxar/api/v2/tv/' + id + '?ck=8pGV&for_mobile=1',
                     headers: {
                         "Content-Type": "text/html; charset=utf-8",
                     },
                     success: function (response) {
-                        let htmlDoc = $(response);
-                        let rate = $(htmlDoc).find('.rating_sum').eq(0).find("span").text()
-                        let p = $(node).children().eq(1);
-                        p.append(`<p>评分人数 <strong>${rate == '' ? '未知':rate}</strong></p>`);
-                    },
-                    onerror: function (err) {
-                        console.log("错误 " + err);
-                    }
-                });
-                $.ajax({
-                    type: 'GET',
-                    url: 'https://movie.douban.com/j/subject_abstract?subject_id=' + id,
-                    headers: {
-                        "Content-Type": "text/html; charset=utf-8",
-                    },
-                    success: function (response) {
-                        let text = response.subject.collection_status;
-                        let cover = $(node).children().eq(0);
+                        let rate = response.rating.count;
+                        $(node).children().eq(1).append(`<p>评分人数 <strong>${rate == '' ? '未知':rate}</strong></p>`);
+
+                        if (response.interest == null) {
+                             await getStatus(node, id);
+                             // return
+                        }
+                        console.log("222 ");
+                        let text = response.interest.status;
                         let status = '';
-                        let bgColor = '';
-                        if (text == 'P') {
+                        if (text == 'done') {
                             status = "看过";
                             bgColor = '#c9c9c9';
-                        } else if (text == 'N') {
+                        } else if (text == 'doing') {
                             status = "在看";
                             bgColor = '#89c6ff';
-                        } else if (text == 'F') {
+                        } else if (text == 'mark') {
                             status = "想看";
                             bgColor = '#e6c76a';
                         }
-                        cover.append(`<div style="position:absolute;left: 5px;bottom: 8px;background-color: ${bgColor};color: black;padding: 1px 4px;border-radius: 4px;">${status}</div>`);
+                        $(node).children().eq(0).append(`<div style="position:absolute;right: 5px;bottom: 8px;background-color: ${bgColor};color: black;padding: 1px 4px;border-radius: 4px;">${status}</div>`);
                     },
                     onerror: function (err) {
                         console.log("错误 " + err);
                     }
                 });
             })
+        }
+
+        function getStatus(node, id) {
+            $.ajax({
+                type: 'GET',
+                url: 'https://movie.douban.com/j/subject_abstract?subject_id=' + id,
+                headers: {
+                    "Content-Type": "text/html; charset=utf-8",
+                },
+                success: function (response) {
+                    let text = response.subject.collection_status;
+                    let cover = $(node).children().eq(0);
+                    let status = '';
+                    let bgColor = '';
+                    if (text == 'P') {
+                        status = "看过";
+                        bgColor = '#c9c9c9';
+                    } else if (text == 'N') {
+                        status = "在看";
+                        bgColor = '#89c6ff';
+                    } else if (text == 'F') {
+                        status = "想看";
+                        bgColor = '#e6c76a';
+                    }
+                    cover.append(`<div style="position:absolute;left: 5px;bottom: 8px;background-color: ${bgColor};color: black;padding: 1px 4px;border-radius: 4px;">${status}</div>`);
+                    console.log("111");
+                },
+                onerror: function (err) {
+                    console.log("错误 " + err);
+                }
+            });
         }
 
 
