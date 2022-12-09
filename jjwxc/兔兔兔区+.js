@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name              兔兔兔区+
 // @namespace         https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA
-// @version           2.1.6
+// @version           2.1.7
 // @description       屏蔽用户|屏蔽帖子|ID统计|帖内搜索|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告
 // @author            chinshry
 // @include           https://bbs.jjwxc.net/bindex.php*
@@ -316,7 +316,6 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         });
                     }
 
-                    /**
                     if (index == 0) {
                         replyName = replyNameNode[0].wholeText.split("|")[0];
                         replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].wholeText.split("留言")[0]);
@@ -330,7 +329,6 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         replyNameNode[2].replaceData(0, replyNameNode[2].length, replyNameNode[2].wholeText.split("留言")[0]);
                         $(replyNameNode)[1].remove();
                     }
-                    **/
 
                     var displayName;
 
