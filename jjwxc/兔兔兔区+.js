@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name              兔兔兔区+
 // @namespace         https://greasyfork.org/zh-CN/scripts/411262-%E5%85%94%E5%85%94%E5%85%94%E5%8C%BA
-// @version           2.1.7
+// @version           2.1.8
 // @description       屏蔽用户|屏蔽帖子|ID统计|帖内搜索|发帖记录直达|快捷举报|楼主标记|只看TA|白色主题夜间主题去广告
 // @author            chinshry
 // @include           https://bbs.jjwxc.net/bindex.php*
@@ -293,8 +293,17 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                     if (index < start) {
                         return true;
                     }
-                    var star = $(node).find('font').eq(-2);
-                    $(star).text("  " + $(star).text().split("来自")[1]);
+
+                    var isNormalFloor = start == 0;
+                    console.log("isNormalFloor = " + isNormalFloor);
+
+                    var starNode;
+                    if (isNormalFloor) {
+                        starNode =  $(node).find('font').eq(-2);
+                    } else {
+                        starNode =  $(node).find('font').eq(-1);
+                    }
+                    $(starNode).text("  " + $(starNode).text().split("来自")[1]);
 
                     var replyIdNode;
                     var replyNameNode;
@@ -320,7 +329,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         replyName = replyNameNode[0].wholeText.split("|")[0];
                         replyNameNode[1].replaceData(0, replyNameNode[1].length, replyNameNode[1].wholeText.split("留言")[0]);
                         $(replyNameNode)[0].remove();
-                    } else if (start != 0) {
+                    } else if (!isNormalFloor) {
                         replyName = replyNameNode[2].wholeText.split("|")[0];
                         replyNameNode[3].replaceData(0, replyNameNode[3].length, replyNameNode[3].wholeText.split("留言")[0]);
                         $(replyNameNode)[2].remove();
@@ -344,9 +353,20 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                         // $(".board-bam").after(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
                         // $(".board-bam").after(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
                     } else {
-                        $(node).parent().next().children().eq(0).append(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:0px">只看TA</a>`);;
                         // $(node).next().prepend(`<a class="board-bam-user-temp" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">隐藏TA</a>`);
                         // $(node).next().prepend(`<a class="board-bam-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:8px">屏蔽TA</a>`);
+                        var authertParentNode = $(node).parent();
+                        var buttonParentNode;
+                        if (isNormalFloor) {
+                            buttonParentNode = authertParentNode.next();
+                        } else {
+                            buttonParentNode = $(node).parent().clone();
+                            authertParentNode.after(buttonParentNode);
+                            authertParentNode.children().eq(1).remove();
+                            buttonParentNode.children().eq(0).remove();
+                            buttonParentNode.children().eq(0).attr("style", "text-align:right")
+                        }
+                        buttonParentNode.children().eq(0).append(`<a class="board-only-show-user" data="${replyName}" href="javascript:void(0);" style = "font-size:14px; margin-left:0px">只看TA</a>`);
                     }
 
                     if (blockUsers !== '') {
@@ -365,7 +385,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
             filter() {
                 let oldTab = document.querySelector("body > center > b");
                 $(oldTab).attr("class", "filter-bam-keyword");
-                $(oldTab).attr("style", "font-size:20px");;
+                $(oldTab).attr("style", "font-size:20px");
                 // $(oldTab).after(`<b class="filter-bam-user">屏蔽用户设置</b>`);
                 $(oldTab).after(`<b class="filter-bam-post">屏蔽帖子设置</b>`);
             }
