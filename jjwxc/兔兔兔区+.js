@@ -413,6 +413,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                 $(newNode).parent().parent().prev().remove();
                 $(newNode).parent().parent().prev().remove();
                 $(newNode).parent().parent().next().remove();
+                $(newNode).parent().parent().next().remove();
                 $(newNode).parent().parent().remove();
             },
             addBlockUserTemp(node) {
@@ -420,6 +421,7 @@ const IS_FILTER = pathname.indexOf('filterword') >= 0 || pathname.indexOf('filte
                 let newNode = $('#replyName_' + name);
                 $(newNode).parent().parent().prev().remove();
                 $(newNode).parent().parent().prev().remove();
+                $(newNode).parent().parent().next().remove();
                 $(newNode).parent().parent().next().remove();
                 $(newNode).parent().parent().remove();
             },
