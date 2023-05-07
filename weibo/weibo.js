@@ -383,12 +383,14 @@
                 userId = status.user.idstr;
                 postUid = status.idstr;
                 postTime = status.created_at;
-                let desc = document.getElementById('inputFileNameDesc').value;
                 let downloadList = [];
                 const isIdMode = default_id_mode_list.indexOf(userId) > -1
                 console.log("isIdMode=" + isIdMode);
-                const downloadDescMode = GM_getValue('downloadDescMode', true)
-                const downloadIdMode = isIdMode || GM_getValue('downloadIdMode', false)    
+                const downloadDescMode = document.getElementById('checkBoxFileNameDesc').checked
+                const downloadIdMode = isIdMode || document.getElementById('checkBoxFileNameId').checked
+                const downloadIndexMode = document.getElementById('checkBoxFileIndexDesc').checked
+                let desc = document.getElementById('inputFileNameDesc').value;
+                let indexLise = document.getElementById('inputFileIndexDesc').value.match(RegExp(/[0-9]+/g))?.map(Number)
                 if(footer.parentElement.getElementsByTagName('video').length > 0) {
                     // console.log('download video');
                     if(resJson.hasOwnProperty('page_info')) {
@@ -414,6 +416,7 @@
                     let totalLength = Object.entries(picInfos).length
                     let padLength = totalLength.toString().length;
                     for (const [id, pic] of Object.entries(picInfos)) {
+                        if (downloadIndexMode && indexLise != null && indexLise.indexOf(index + 1) == -1) continue
                         index += 1;
                         let largePicUrl = pic.largest.url;
                         let picName = largePicUrl.split('/')[largePicUrl.split('/').length - 1].split('?')[0];
@@ -494,11 +497,13 @@
                 userId = status.user.idstr;
                 postUid = status.idstr;
                 postTime = status.created_at;
-                let desc = document.getElementById('inputFileNameDesc').value;
                 const isIdMode = default_id_mode_list.indexOf(userId) > -1
                 console.log("isIdMode=" + isIdMode);
-                const downloadDescMode = GM_getValue('downloadDescMode', true)
-                const downloadIdMode = isIdMode || GM_getValue('downloadIdMode', false)        
+                const downloadDescMode = document.getElementById('checkBoxFileNameDesc').checked
+                const downloadIdMode = isIdMode || document.getElementById('checkBoxFileNameId').checked
+                const downloadIndexMode = document.getElementById('checkBoxFileIndexDesc').checked
+                let desc = document.getElementById('inputFileNameDesc').value;
+                let indexLise = document.getElementById('inputFileIndexDesc').value.match(RegExp(/[0-9]+/g))?.map(Number)
                 let downloadList = [];
                 if(footer.parentElement.getElementsByTagName('video').length > 0) {
                     // console.log('download video');
@@ -526,6 +531,7 @@
                     let totalLength = Object.entries(picInfos).length
                     let padLength = totalLength.toString().length;
                     for (const [id, pic] of Object.entries(picInfos)) {
+                        if (downloadIndexMode && indexLise != null && indexLise.indexOf(index + 1) == -1) continue
                         index += 1;
                         let largePicUrl = pic.largest.url;
                         let picName = largePicUrl.split('/')[largePicUrl.split('/').length - 1].split('?')[0];
@@ -785,8 +791,29 @@
         inputFileNameDesc.style.marginLeft = '30px'
         question2.append(inputFileNameDesc);
 
-        let br = document.createElement('br');
-        question2.append(br);
+        let br1 = document.createElement('br');
+        question2.append(br1);
+
+        let checkBoxFileIndexDesc = document.createElement('input');
+        checkBoxFileIndexDesc.type = 'checkbox';
+        checkBoxFileIndexDesc.id = 'checkBoxFileIndexDesc';
+        checkBoxFileIndexDesc.name = 'checkBoxFileIndexDesc';
+        checkBoxFileIndexDesc.style.marginTop = '0.5rem';
+        checkBoxFileIndexDesc.checked = GM_getValue('downloadDescMode', true);
+        question2.appendChild(checkBoxFileIndexDesc);
+        let spanFileIndexDesc = document.createElement('span')
+        spanFileIndexDesc.textContent = "序号"
+        question2.append(spanFileIndexDesc);
+        let inputFileIndexDesc = document.createElement('input')
+        inputFileIndexDesc.type = 'input';
+        inputFileIndexDesc.id = 'inputFileIndexDesc'
+        inputFileIndexDesc.name = 'inputFileIndexDesc';
+        inputFileIndexDesc.style.width = '160px'
+        inputFileIndexDesc.style.marginLeft = '30px'
+        question2.append(inputFileIndexDesc);
+
+        let br2 = document.createElement('br');
+        question2.append(br2);
 
         let checkBoxFileNameId = document.createElement('input');
         checkBoxFileNameId.type = 'checkbox';
@@ -813,8 +840,6 @@
                 addDlBtnMode = 2;
                 addEventListener();
             }
-            GM_setValue('downloadDescMode', document.getElementById('checkBoxFileNameDesc').checked);
-            GM_setValue('downloadIdMode', document.getElementById('checkBoxFileNameId').checked);
         });
         settingModel.appendChild(okButton);
 
