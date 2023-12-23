@@ -27,6 +27,7 @@
 // @connect      www.weibo.com
 // @connect      sinaimg.cn
 // @connect      weibocdn.com
+// @connect      weibo.dy114.com
 // @connect      localhost
 // @namespace    http://tampermonkey.net/
 // @run-at       document-end
@@ -288,6 +289,26 @@
             } else {
                 oReq.send();
             }
+        });
+    }
+
+    function gmRequest(url, method = 'GET', data = null) {
+        return new Promise(function(resolve, reject) {
+            GM_xmlhttpRequest({
+                method: method,
+                url: url,
+                data: data,
+                responseType: 'json',
+                headers: {
+                    "Content-Type": typeof(data) === 'string' ? "application/x-www-form-urlencoded" : "application/json;charset=UTF-8",
+                },
+                onload: ({ status, response }) => {
+                    resolve(response);
+                },
+                onabort: function(e) { resolve(null); },
+                onerror: function(e) { resolve(null); },
+                ontimeout: function(e) { resolve(null); },
+            });
         });
     }
 
@@ -683,24 +704,55 @@
     async function handleVideo(mediaInfo, totalLength, userName, userId, postId, postUid, index, postTime, text, retweetPostId, retweetUserName, retweetUserId, retweetPostUid, retweetPostTime, retweetText) {
         const newList = [];
         let largeVidUrl = mediaInfo.playback_list ? mediaInfo.playback_list[0].play_info.url : ( mediaInfo.mp4_hd_url || mediaInfo.stream_url_hd || mediaInfo.stream_url );
+        let largeCoverUrl = mediaInfo.big_pic_info.pic_big.url;
         if(mediaInfo.hasOwnProperty('h5_url') && mediaInfo.h5_url) {
-            const urlObj = new URL(mediaInfo.h5_url); // e.g. 'https://video.weibo.com/show?fid=1034:4924511439749139'
-            const fid = urlObj.searchParams.get('fid');
-            let url = 'https://' + location.host + '/tv/api/component?page=/tv/show/' + fid; // e.g. 'https://weibo.com/tv/api/component?page=/tv/show/1034:4924511439749139'
-            let data = 'data={"Component_Play_Playinfo":{"oid":"' + fid + '"}}' // e.g. 'data={"Component_Play_Playinfo":{"oid":"1034:4924511439749139"}}'
-            let tvRes = await httpRequest(url, 'POST', data);
-            if(tvRes && tvRes.data && tvRes.data.Component_Play_Playinfo && tvRes.data.Component_Play_Playinfo.urls && Object.keys(tvRes.data.Component_Play_Playinfo.urls).length > 0) {
-                largeVidUrl = tvRes.data.Component_Play_Playinfo.urls[Object.keys(tvRes.data.Component_Play_Playinfo.urls)[0]];
-                if(largeVidUrl.startsWith('//')) {
-                    largeVidUrl = 'http:' + largeVidUrl;
+            let originVideo = document.getElementById('checkBoxOriginVideo').checked;
+            if (originVideo) {
+                let apiRes = await gmRequest("https://weibo.dy114.com/parse/index", 'POST', "pageUrl=" + encodeURIComponent(mediaInfo.h5_url));
+                if (apiRes.status == 200) {
+                    largeVidUrl = apiRes.data.data.voideurl
+                    largeCoverUrl = apiRes.data.data.photo
+                } else {
+                    const urlObj = new URL(mediaInfo.h5_url); // e.g. 'https://video.weibo.com/show?fid=1034:4924511439749139'
+                    const fid = urlObj.searchParams.get('fid');
+                    let url = 'https://' + location.host + '/tv/api/component?page=/tv/show/' + fid; // e.g. 'https://weibo.com/tv/api/component?page=/tv/show/1034:4924511439749139'
+                    let data = 'data={"Component_Play_Playinfo":{"oid":"' + fid + '"}}' // e.g. 'data={"Component_Play_Playinfo":{"oid":"1034:4924511439749139"}}'
+                    let tvRes = await httpRequest(url, 'POST', data);
+                    if(tvRes && tvRes.data && tvRes.data.Component_Play_Playinfo && tvRes.data.Component_Play_Playinfo.urls && Object.keys(tvRes.data.Component_Play_Playinfo.urls).length > 0) {
+                        largeVidUrl = tvRes.data.Component_Play_Playinfo.urls[Object.keys(tvRes.data.Component_Play_Playinfo.urls)[0]];
+                        largeCoverUrl = tvRes.data.Component_Play_Playinfo.cover_image;
+                        if(largeVidUrl.startsWith('//')) {
+                            largeVidUrl = 'http:' + largeVidUrl;
+                        }
+                        if(largeCoverUrl.startsWith('//')) {
+                            largeCoverUrl = 'http:' + largeCoverUrl;
+                        }
+                    }
+                }
+            } else {
+                const urlObj = new URL(mediaInfo.h5_url); // e.g. 'https://video.weibo.com/show?fid=1034:4924511439749139'
+                const fid = urlObj.searchParams.get('fid');
+                let url = 'https://' + location.host + '/tv/api/component?page=/tv/show/' + fid; // e.g. 'https://weibo.com/tv/api/component?page=/tv/show/1034:4924511439749139'
+                let data = 'data={"Component_Play_Playinfo":{"oid":"' + fid + '"}}' // e.g. 'data={"Component_Play_Playinfo":{"oid":"1034:4924511439749139"}}'
+                let tvRes = await httpRequest(url, 'POST', data);
+                if(tvRes && tvRes.data && tvRes.data.Component_Play_Playinfo && tvRes.data.Component_Play_Playinfo.urls && Object.keys(tvRes.data.Component_Play_Playinfo.urls).length > 0) {
+                    largeVidUrl = tvRes.data.Component_Play_Playinfo.urls[Object.keys(tvRes.data.Component_Play_Playinfo.urls)[0]];
+                    largeCoverUrl = tvRes.data.Component_Play_Playinfo.cover_image;
+                    if(largeVidUrl.startsWith('//')) {
+                        largeVidUrl = 'http:' + largeVidUrl;
+                    }
+                    if(largeCoverUrl.startsWith('//')) {
+                        largeCoverUrl = 'http:' + largeCoverUrl;
+                    }
                 }
             }
         }
         console.log("handleVideo largeVidUrl=" + largeVidUrl);
+        console.log("handleVideo largeCoverUrl=" + largeCoverUrl);
         let vidName = largeVidUrl.split('?')[0];
         vidName = vidName.split('/')[vidName.split('/').length - 1].split('?')[0];
         let originalName = vidName.split('.')[0];
-        let ext = vidName.split('.')[1];
+        let ext = vidName.split('.')[1] ?? "mp4";
         const setName = getName((GM_getValue('retweetMode', false) && retweetPostId) ? GM_getValue('retweetFileName', '{original}.{ext}') : GM_getValue('dlFileName', '{original}.{ext}'), originalName, ext, userName, userId, postId, postUid, index, totalLength, postTime, text, retweetPostId, retweetUserName, retweetUserId, retweetPostUid, retweetPostTime, retweetText);
         newList.push({ url: largeVidUrl, name: setName, headerFlag: true });
         const isIdMode = default_id_mode_list.indexOf(userId) > -1
@@ -1721,6 +1773,8 @@
     }
 
     function showSetting() {
+        console.log("showSetting init");
+        
         let settingModel = document.createElement('div');
         settingModel.style.top = '4rem';
         settingModel.style.position = 'fixed';
@@ -1737,8 +1791,27 @@
         settingButton.style.zIndex = 400;
         settingButton.addEventListener('click', showModal);
     
+        let question1 = document.createElement('div');
+        // question1.style.paddingTop = '0.8rem';
+        // question1.style.paddingLeft = '0.1rem';
+
+        let spanOriginVideo = document.createElement('span');
+        spanOriginVideo.textContent = "视频";
+        spanOriginVideo.style.fontWeight= 'bold';
+        spanOriginVideo.style.fontSize= '15px';
+        question1.append(spanOriginVideo);
+    
+        let checkBoxOriginVideo = document.createElement('input');
+        checkBoxOriginVideo.type = 'checkbox';
+        checkBoxOriginVideo.id = 'checkBoxOriginVideo';
+        checkBoxOriginVideo.name = 'checkBoxOriginVideo';
+        checkBoxOriginVideo.style.marginTop = '0.5rem';
+        checkBoxOriginVideo.style.marginLeft = '0.6rem';
+        checkBoxOriginVideo.checked = false;
+        question1.appendChild(checkBoxOriginVideo);
+    
         let question2 = document.createElement('div');
-        // question2.style.paddingTop = '0.8rem';
+        question2.style.paddingTop = '0.8rem';
         // question2.style.paddingLeft = '0.1rem';
 
         let spanFileNameDesc = document.createElement('span');
@@ -1756,6 +1829,7 @@
         question2.append(inputFileNameDesc);
     
         // settingModel.appendChild(settingButton);
+        settingModel.appendChild(question1);
         settingModel.appendChild(question2);
         document.body.appendChild(settingModel);
         GM_registerMenuCommand(text[25], showModal, "0");    
