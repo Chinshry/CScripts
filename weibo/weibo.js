@@ -18,6 +18,8 @@
 // @license      MIT
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
+// @grant        GM_download 
+// @grant        GM_openInTab 
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
@@ -455,7 +457,7 @@
                 if(downloadQueueCard.childElementCount == 1) downloadQueueTitle.style.display = 'none';
             };*/
             // 这个方法也可以，而且不是走GM_download，不会被油猴设置里的下载选项影响。
-            const download = GM_xmlhttpRequest({
+            /*const download = GM_xmlhttpRequest({
                 method: 'GET',
                 url,
                 responseType: 'blob',
@@ -486,9 +488,9 @@
                 download.abort();
                 this.parentNode.remove();
                 if(downloadQueueCard.childElementCount == 1) downloadQueueTitle.style.display = 'none';
-            };
+            };*/
             // 下面这种原生的方法，可以正常下载非V+的资源，遇到V+的资源会报错。
-            /*let oReq = new XMLHttpRequest();
+            let oReq = new XMLHttpRequest();
             oReq.open("GET", url);
             oReq.responseType = 'blob';
             oReq.onprogress = (e) => {
@@ -517,7 +519,7 @@
                 this.parentNode.remove();
                 oReq.abort();
                 if(downloadQueueCard.childElementCount == 1) downloadQueueTitle.style.display = 'none';
-            };*/
+            };
             // 下面fetch的方法，感觉不是很好写，所以就不用下面的方法。
             /*(async function () {
                 let controller = new AbortController();
@@ -694,7 +696,7 @@
                 }
             }
         }
-        // console.log(largeVidUrl);
+        console.log("handleVideo largeVidUrl=" + largeVidUrl);
         let vidName = largeVidUrl.split('?')[0];
         vidName = vidName.split('/')[vidName.split('/').length - 1].split('?')[0];
         let originalName = vidName.split('.')[0];
@@ -1725,7 +1727,7 @@
         settingModel.style.width = 'auto';
         settingModel.style.height = 'auto';
         settingModel.style.zIndex = 600;
-        settingModel.style.padding = '1rem';
+        settingModel.style.padding = '0.8rem';
         settingModel.style.backgroundColor = '#0c0c0c';
         settingModel.style.borderRadius = '1rem';
     
@@ -1736,24 +1738,24 @@
         settingButton.addEventListener('click', showModal);
     
         let question2 = document.createElement('div');
-        question2.style.paddingTop = '0.8rem';
-        question2.style.paddingLeft = '0.1rem';
+        // question2.style.paddingTop = '0.8rem';
+        // question2.style.paddingLeft = '0.1rem';
 
         let spanFileNameDesc = document.createElement('span');
         spanFileNameDesc.textContent = "描述";
         spanFileNameDesc.style.fontWeight= 'bold';
-        spanFileNameDesc.style.fontSize= '16px';
+        spanFileNameDesc.style.fontSize= '15px';
         question2.append(spanFileNameDesc);
     
         let inputFileNameDesc = document.createElement('input');
         inputFileNameDesc.type = 'input';
         inputFileNameDesc.id = 'inputFileNameDesc';
         inputFileNameDesc.name = 'inputFileNameDesc';
-        inputFileNameDesc.style.width = '160px';
-        inputFileNameDesc.style.marginLeft = '30px';
+        inputFileNameDesc.style.width = '140px';
+        inputFileNameDesc.style.marginLeft = '10px';
         question2.append(inputFileNameDesc);
     
-        settingModel.appendChild(settingButton);
+        // settingModel.appendChild(settingButton);
         settingModel.appendChild(question2);
         document.body.appendChild(settingModel);
         GM_registerMenuCommand(text[25], showModal, "0");    
