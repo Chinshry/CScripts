@@ -900,7 +900,7 @@
         // console.log('added download button');
     }
 
-    // 单条微博下载按钮
+    // 单张图片下载按钮
     function addSingleDlBtn(img, idx = 0) {
         // console.log(img);
         const imgCtn = img.parentElement;
@@ -908,7 +908,7 @@
         dlBtn.style.position = 'absolute';
         dlBtn.style.bottom = '0';
         dlBtn.style.left = '0';
-        dlBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+        dlBtn.style.backgroundColor = 'transparent';
         dlBtn.style.padding = '0.3rem';
         dlBtn.style.borderRadius = '0 8px';
         dlBtn.style.width = '1rem';
@@ -916,8 +916,8 @@
         dlBtn.style.cursor = 'pointer';
         dlBtn.style.zIndex = '11';
         dlBtn.innerHTML = '<i class="woo-font woo-font--imgSave"></i>';
-        dlBtn.addEventListener('mouseenter', (event) => { dlBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; });
-        dlBtn.addEventListener('mouseleave', (event) => { dlBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.4)'; });
+        dlBtn.addEventListener('mouseenter', (event) => { dlBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'; });
+        dlBtn.addEventListener('mouseleave', (event) => { dlBtn.style.backgroundColor = 'transparent'; });
         dlBtn.addEventListener('click', async function(event) {
             event.stopPropagation();
             const article = this.closest('article.woo-panel-main');
