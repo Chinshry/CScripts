@@ -707,11 +707,13 @@
         let largeCoverUrl = mediaInfo.big_pic_info.pic_big.url;
         if(mediaInfo.hasOwnProperty('h5_url') && mediaInfo.h5_url) {
             let originVideo = document.getElementById('checkBoxOriginVideo').checked;
+            console.log("handleVideo originVideo=" + originVideo);
             if (originVideo) {
                 let apiRes = await gmRequest("https://weibo.dy114.com/parse/index", 'POST', "pageUrl=" + encodeURIComponent(mediaInfo.h5_url));
                 if (apiRes.status == 200) {
                     largeVidUrl = apiRes.data.data.voideurl
-                    largeCoverUrl = apiRes.data.data.photo
+                    largeCoverUrl = apiRes.data.data.photo  + ".jpg"
+                    largeCoverUrl = largeCoverUrl.replace("lz", "wx1")
                 } else {
                     const urlObj = new URL(mediaInfo.h5_url); // e.g. 'https://video.weibo.com/show?fid=1034:4924511439749139'
                     const fid = urlObj.searchParams.get('fid');
@@ -726,6 +728,7 @@
                         }
                         if(largeCoverUrl.startsWith('//')) {
                             largeCoverUrl = 'http:' + largeCoverUrl;
+                            largeCoverUrl = largeCoverUrl.replace("orj480", "osj1080")
                         }
                     }
                 }
@@ -743,6 +746,7 @@
                     }
                     if(largeCoverUrl.startsWith('//')) {
                         largeCoverUrl = 'http:' + largeCoverUrl;
+                        largeCoverUrl = largeCoverUrl.replace("orj480", "osj1080")
                     }
                 }
             }
@@ -755,6 +759,12 @@
         let ext = vidName.split('.')[1] ?? "mp4";
         const setName = getName((GM_getValue('retweetMode', false) && retweetPostId) ? GM_getValue('retweetFileName', '{original}.{ext}') : GM_getValue('dlFileName', '{original}.{ext}'), originalName, ext, userName, userId, postId, postUid, index, totalLength, postTime, text, retweetPostId, retweetUserName, retweetUserId, retweetPostUid, retweetPostTime, retweetText);
         newList.push({ url: largeVidUrl, name: setName, headerFlag: true });
+        let coverVideo = document.getElementById('checkBoxCoverVideo').checked;
+        console.log("handleVideo coverVideo=" + coverVideo);
+        if (coverVideo) {
+            const setCoverName = getName((GM_getValue('retweetMode', false) && retweetPostId) ? GM_getValue('retweetFileName', '{original}.{ext}') : GM_getValue('dlFileName', '{original}.{ext}'), originalName, "jpg", userName, userId, postId, postUid, index, totalLength, postTime, text, retweetPostId, retweetUserName, retweetUserId, retweetPostUid, retweetPostTime, retweetText);
+            newList.push({ url: largeCoverUrl, name: setCoverName, headerFlag: true });
+        }
         const isIdMode = default_id_mode_list.indexOf(userId) > -1
         console.log("handleVideo isIdMode=" + isIdMode);
         if (isIdMode) {
@@ -1794,22 +1804,40 @@
         let question1 = document.createElement('div');
         // question1.style.paddingTop = '0.8rem';
         // question1.style.paddingLeft = '0.1rem';
+    
+        let spanCoverVideo = document.createElement('span');
+        spanCoverVideo.textContent = "封面";
+        spanCoverVideo.style.fontWeight= 'bold';
+        spanCoverVideo.style.fontSize= '15px';
+        spanCoverVideo.style.verticalAlign = 'middle';
+        question1.append(spanCoverVideo);
+    
+        let checkBoxCoverVideo = document.createElement('input');
+        checkBoxCoverVideo.type = 'checkbox';
+        checkBoxCoverVideo.id = 'checkBoxCoverVideo';
+        checkBoxCoverVideo.name = 'checkBoxCoverVideo';
+        checkBoxCoverVideo.style.marginLeft = '0.6rem';
+        checkBoxCoverVideo.style.marginRight = '1rem';
+        checkBoxCoverVideo.style.verticalAlign = 'middle';
+        checkBoxCoverVideo.checked = false;
+        question1.appendChild(checkBoxCoverVideo);
 
         let spanOriginVideo = document.createElement('span');
-        spanOriginVideo.textContent = "视频";
+        spanOriginVideo.textContent = "原视频下载";
         spanOriginVideo.style.fontWeight= 'bold';
         spanOriginVideo.style.fontSize= '15px';
+        spanOriginVideo.style.verticalAlign = 'middle';
         question1.append(spanOriginVideo);
     
         let checkBoxOriginVideo = document.createElement('input');
         checkBoxOriginVideo.type = 'checkbox';
         checkBoxOriginVideo.id = 'checkBoxOriginVideo';
         checkBoxOriginVideo.name = 'checkBoxOriginVideo';
-        checkBoxOriginVideo.style.marginTop = '0.5rem';
         checkBoxOriginVideo.style.marginLeft = '0.6rem';
+        checkBoxOriginVideo.style.verticalAlign = 'middle';
         checkBoxOriginVideo.checked = false;
         question1.appendChild(checkBoxOriginVideo);
-    
+
         let question2 = document.createElement('div');
         question2.style.paddingTop = '0.8rem';
         // question2.style.paddingLeft = '0.1rem';
